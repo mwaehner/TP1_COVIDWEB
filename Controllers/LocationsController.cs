@@ -65,6 +65,43 @@ namespace TP1_ARQWEB.Controllers
             return View(location);
         }
 
+        // GET: Locations/QRCode/5
+        [Authorize]
+        public async Task<IActionResult> QRCode(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var location = await _context.Location
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (location == null)
+            {
+                return NotFound();
+            }
+
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                // the principal identity is a claims identity.
+                // now we need to find the NameIdentifier claim
+                var userIdClaim = claimsIdentity.Claims
+                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim != null)
+                {
+                    var userIdValue = userIdClaim.Value;
+                    if (userIdValue != location.IdPropietario)
+                    {
+                        return NotFound();
+                    }
+                }
+            }
+
+            return View(location);
+        }
+
         // GET: Locations/Create
         [Authorize]
         public IActionResult Create()

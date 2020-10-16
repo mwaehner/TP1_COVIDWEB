@@ -35,4 +35,7 @@ Cambio de matías: como ahora hay dos contextos (TP1_ARQWEBdbContext y MvcLocati
 
 6 - salir y volver a loguearse con mismo mail y password, el sitio los tiene que tener registrados.
 
+7 - para que se pueda mostrar los códigos QR, se debe ir a Tools/NuGet Package Manager/Manage NuGet Packages for Solution
+y en Browse buscar el paquete QRCoder de Raffael Herrmann e instalarlo.
+
 

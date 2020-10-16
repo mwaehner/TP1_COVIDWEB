@@ -1,0 +1,27 @@
+﻿@model TP1_ARQWEB.Models.Location
+@using QRCoder;
+
+@{
+    ViewData["Title"] = "Código QR";
+}
+
+
+
+@{
+    string linkToEncode = @"https://localhost:44320/Check/Details/" + Model.Id;
+
+    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+    QRCodeData qrCodeData = qrGenerator.CreateQrCode(linkToEncode, QRCodeGenerator.ECCLevel.Q);
+    Base64QRCode qrCode = new Base64QRCode(qrCodeData);
+    string qrCodeImageAsBase64 = qrCode.GetGraphic(20);
+}
+
+<div>
+    <h1>@Html.DisplayFor(model => model.Nombre)</h1>
+    <hr />
+
+    <img src="data:image/png;base64, @qrCodeImageAsBase64" width="950" height="950"/>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
