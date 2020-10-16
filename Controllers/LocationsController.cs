@@ -44,6 +44,24 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                // the principal identity is a claims identity.
+                // now we need to find the NameIdentifier claim
+                var userIdClaim = claimsIdentity.Claims
+                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim != null)
+                {
+                    var userIdValue = userIdClaim.Value;
+                    if (userIdValue != location.IdPropietario)
+                    {
+                        return NotFound();
+                    }
+                }
+            }
+
             return View(location);
         }
 
@@ -95,11 +113,32 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
+
+
             var location = await _context.Location.FindAsync(id);
             if (location == null)
             {
                 return NotFound();
             }
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                // the principal identity is a claims identity.
+                // now we need to find the NameIdentifier claim
+                var userIdClaim = claimsIdentity.Claims
+                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim != null)
+                {
+                    var userIdValue = userIdClaim.Value;
+                    if(userIdValue != location.IdPropietario)
+                    {
+                        return NotFound();
+                    }
+                }
+            }
+
+
             return View(location);
         }
 
@@ -168,6 +207,24 @@ namespace TP1_ARQWEB.Controllers
             if (location == null)
             {
                 return NotFound();
+            }
+
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                // the principal identity is a claims identity.
+                // now we need to find the NameIdentifier claim
+                var userIdClaim = claimsIdentity.Claims
+                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim != null)
+                {
+                    var userIdValue = userIdClaim.Value;
+                    if (userIdValue != location.IdPropietario)
+                    {
+                        return NotFound();
+                    }
+                }
             }
 
             return View(location);
