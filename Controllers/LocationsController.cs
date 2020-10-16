@@ -109,7 +109,7 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Capacidad,IdPropietario,Latitud,Longitud")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Capacidad,Latitud,Longitud")] Location location)
         {
             if (id != location.Id)
             {
@@ -120,8 +120,23 @@ namespace TP1_ARQWEB.Controllers
             {
                 try
                 {
-                    _context.Update(location);
-                    await _context.SaveChangesAsync();
+                    var claimsIdentity = User.Identity as ClaimsIdentity;
+                    if (claimsIdentity != null)
+                    {
+                        // the principal identity is a claims identity.
+                        // now we need to find the NameIdentifier claim
+                        var userIdClaim = claimsIdentity.Claims
+                            .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+                        if (userIdClaim != null)
+                        {
+                            var userIdValue = userIdClaim.Value;
+                            location.IdPropietario = userIdValue;
+                            _context.Update(location);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    
                 }
                 catch (DbUpdateConcurrencyException)
                 {
