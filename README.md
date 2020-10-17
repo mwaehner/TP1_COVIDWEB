@@ -22,12 +22,7 @@ y seleccionar "consola de administrador de paquetes"
   	Add-Migration "Initial-Create"
     Update-Database
 
-Cambio de matías: como ahora hay dos contextos (TP1_ARQWEBdbContext y MvcLocationContext), hay que hacer lo anterior para cada uno.
-
-    Add-Migration "Initial-Create" -Context TP1_ARQWEBdbContext
-    Add-Migration "Initial-Create2" -Context MvcLocationContext
-    update-database -Context TP1_ARQWEBdbContext
-    update-database -Context MvcLocationContext
+ 
 
 4 - ingresar email y password en pantalla de registro
 
