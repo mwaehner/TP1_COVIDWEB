@@ -16,16 +16,16 @@ namespace TP1_ARQWEB.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
-                services.AddDbContext<TP1_ARQWEBdbContext>(options =>
+                services.AddDbContext<MvcLocationContext>(options =>
                     options.UseSqlServer(
-                        context.Configuration.GetConnectionString("TP1_ARQWEBdbContextConnection")));
+                        context.Configuration.GetConnectionString("MvcLocationContext")));
 
                 services.AddDefaultIdentity<ApplicationUser>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
-                }).AddEntityFrameworkStores<TP1_ARQWEBdbContext>();
+                }).AddEntityFrameworkStores<MvcLocationContext>();
             });
         }
     }

@@ -29,8 +29,8 @@ namespace TP1_ARQWEB
             services.AddRazorPages();
 
             
-            services.AddDbContext<MvcLocationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MvcLocationContext")));
+           // services.AddDbContext<MvcLocationContext>(options =>
+              //  options.UseSqlServer(Configuration.GetConnectionString("MvcLocationContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
