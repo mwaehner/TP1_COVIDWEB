@@ -19,6 +19,7 @@ namespace TP1_ARQWEB.Data
         }
 
         public DbSet<Location> Location { get; set; }
+        public DbSet<UserAppInfo> UserAppInfo { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
