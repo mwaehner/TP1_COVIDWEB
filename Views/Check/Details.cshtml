@@ -1,0 +1,43 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Location</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Nombre
+        </dt>
+        <dd class="col-sm-10">
+            @Model.location.Nombre
+        </dd>
+        <dt class="col-sm-2">
+            Capacidad
+        </dt>
+        <dd class="col-sm-10">
+            @Model.location.Capacidad
+        </dd>
+    </dl>
+</div>
+
+@{
+    string inOut;
+
+    if (Model.userInLocation) inOut = "Out";
+    else inOut = "In";
+
+}
+    <form asp-action="@inOut" asp-route-id="@Model.location.Id" method="post">
+        <div class="form-group">
+            <input type="submit" value="Check @inOut" class="btn btn-primary" />
+        </div>
+    </form>
+
+<div>
+    <a asp-action="@inOut" asp-route-id="@Model.location.Id">Check @inOut</a>
+</div>
