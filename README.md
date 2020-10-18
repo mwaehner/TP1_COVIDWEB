@@ -6,13 +6,19 @@ Para poder acceder a pantalla "home" es necesario registrarse al sitio. para est
 Los pasos para crear database de usuarios:
 
 1 - en appsettings.json hay que modificar código para conectarse a server activo. Para esto levantar alguno con sql management studio o azure studio, por ejemplo un sqlexpress, y
- colocar el nombre del server en la linea 10, esto es:
+ colocar el nombre del server en la linea 11, esto es:
 	  
-    "ConnectionStrings": "Server= <nombre server> ;Database= <nombre database a crear> ;Trusted_Connection=True;MultipleActiveResultSets=true"
+   
+   
+    "MvcLocationContext": "Server= <nombre server>;Database=<nombre database a crear> ;Trusted_Connection=True;MultipleActiveResultSets=true"
+  
 
 por ejemplo:	
+
 	
-    "ConnectionStrings": "Server= localhost\\SQLEXPRESS;Database=TP1_ARQWEB_DB2;Trusted_Connection=True;MultipleActiveResultSets=true"
+    
+    "MvcLocationContext": "Server=(localdb)\\mssqllocaldb;Database=master5;Trusted_Connection=True;MultipleActiveResultSets=true"
+  
 
 2 - seleccionar el nombre del proyecto (al inicio del arbol que despliega visual studio, derecha), y en la pestaña "herramientas" (arriba) ir a "administrador de paquetes nuget"
 y seleccionar "consola de administrador de paquetes"
@@ -22,12 +28,7 @@ y seleccionar "consola de administrador de paquetes"
   	Add-Migration "Initial-Create"
     Update-Database
 
-Cambio de matías: como ahora hay dos contextos (TP1_ARQWEBdbContext y MvcLocationContext), hay que hacer lo anterior para cada uno.
-
-    Add-Migration "Initial-Create" -Context TP1_ARQWEBdbContext
-    Add-Migration "Initial-Create2" -Context MvcLocationContext
-    update-database -Context TP1_ARQWEBdbContext
-    update-database -Context MvcLocationContext
+ 
 
 4 - ingresar email y password en pantalla de registro
 
