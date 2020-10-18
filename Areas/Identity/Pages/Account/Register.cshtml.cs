@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using TP1_ARQWEB.Areas.Identity.Data;
+using TP1_ARQWEB.Data;
+using TP1_ARQWEB.Models;
 
 namespace TP1_ARQWEB.Areas.Identity.Pages.Account
 {
@@ -24,17 +26,20 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly MvcLocationContext _context;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            MvcLocationContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [BindProperty]
@@ -91,7 +96,7 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email , FirstName = Input.FirstName , LastName = Input.LastName};
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName , LastName = Input.LastName };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -108,6 +113,19 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
+
+                    UserAppInfo userInfo = new UserAppInfo
+                    {
+                        Id = user.Id,
+                        Nombre = user.FirstName,
+                        Apellido = user.LastName,
+                        CurrentLocationId = null,
+                        CurrentStayId = null
+                    };
+
+                    _context.Add(userInfo);
+                    await _context.SaveChangesAsync();
+
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
@@ -117,6 +135,8 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
+
+
                 }
                 foreach (var error in result.Errors)
                 {
