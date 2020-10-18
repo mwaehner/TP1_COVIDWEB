@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
+using Microsoft.AspNetCore.Identity;
+using TP1_ARQWEB.Areas.Identity.Data;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -18,9 +20,11 @@ namespace TP1_ARQWEB.Controllers
     {
 
         private readonly MvcLocationContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CheckController(MvcLocationContext context)
+        public CheckController(UserManager<ApplicationUser> userManager, MvcLocationContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
@@ -63,21 +67,9 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            string userIdValue = "";
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            string userIdValue = _userManager.GetUserId(User);
 
-                if (userIdClaim != null)
-                {
-                    userIdValue = userIdClaim.Value;
-                    
-                }
-            }
+            
 
             UserAppInfo currentUser = await _context.UserAppInfo
                 .FirstOrDefaultAsync(m => m.Id == userIdValue);
@@ -100,20 +92,7 @@ namespace TP1_ARQWEB.Controllers
             // el parametro Id no es la Id de la locacion de la que se hará Check Out sino de la locacion
             // cuyos detalles se mostran luego del Check Out
         {
-            string userIdValue = "";
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null)
-                {
-                    userIdValue = userIdClaim.Value;
-                }
-            }
+            string userIdValue = _userManager.GetUserId(User);
 
             UserAppInfo currentUser = await _context.UserAppInfo
                 .FirstOrDefaultAsync(m => m.Id == userIdValue);
@@ -142,29 +121,14 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> In(int? Id)
         {
-            string userIdValue = "";
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            string userIdValue = _userManager.GetUserId(User);
 
-                if (userIdClaim != null)
-                {
-                    userIdValue = userIdClaim.Value;
-                }
-            }
-
-            
             UserAppInfo currentUser = await _context.UserAppInfo
                 .FirstOrDefaultAsync(m => m.Id == userIdValue);
 
             if (currentUser.CurrentLocationId == null)
             {
-                
-
+               
                 Stay newStay = new Stay
                 {
                     UserId = currentUser.Id,
