@@ -119,7 +119,8 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
                         Id = user.Id,
                         Nombre = user.FirstName,
                         Apellido = user.LastName,
-                        CurrentLocation = null
+                        CurrentLocationId = null,
+                        CurrentStayId = null
                     };
 
                     _context.Add(userInfo);

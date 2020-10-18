@@ -12,8 +12,8 @@ namespace TP1_ARQWEB.Models
         [Required]
         public string Apellido { get; set; }
 
-        [Column(TypeName = "int")]
-        public int? CurrentLocation { get; set; }
+        public int? CurrentLocationId { get; set; }
+        public int? CurrentStayId { get; set; }
 
     }
 }

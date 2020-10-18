@@ -82,7 +82,7 @@ namespace TP1_ARQWEB.Controllers
             UserAppInfo currentUser = await _context.UserAppInfo
                 .FirstOrDefaultAsync(m => m.Id == userIdValue);
 
-            bool userInLocation = currentUser.CurrentLocation == location.Id;
+            bool userInLocation = currentUser.CurrentLocationId == location.Id;
 
             dynamic model = new ExpandoObject();
             model.location = location;
@@ -118,10 +118,17 @@ namespace TP1_ARQWEB.Controllers
             UserAppInfo currentUser = await _context.UserAppInfo
                 .FirstOrDefaultAsync(m => m.Id == userIdValue);
 
-            if (currentUser.CurrentLocation != null)
+            if (currentUser.CurrentLocationId != null)
             {
-                currentUser.CurrentLocation = null;
+                Stay currentStay = await _context.Stay
+                .FirstOrDefaultAsync(m => m.Id == currentUser.CurrentStayId);
+
+                currentUser.CurrentLocationId = null;
+                currentUser.CurrentStayId = null;
                 _context.Update(currentUser);
+
+                currentStay.TimeOfExit = DateTime.Now;
+                _context.Update(currentStay);
                 await _context.SaveChangesAsync();
             }
 
@@ -154,14 +161,28 @@ namespace TP1_ARQWEB.Controllers
             UserAppInfo currentUser = await _context.UserAppInfo
                 .FirstOrDefaultAsync(m => m.Id == userIdValue);
 
-            if (currentUser.CurrentLocation == null)
+            if (currentUser.CurrentLocationId == null)
             {
-                currentUser.CurrentLocation = Id;
-                _context.Update(currentUser);
+                
+
+                Stay newStay = new Stay
+                {
+                    UserId = currentUser.Id,
+                    LocationId = (int)Id,
+                    TimeOfEntrance = DateTime.Now,
+                    TimeOfExit = null
+                };
+                _context.Add(newStay);
                 await _context.SaveChangesAsync();
-            } else if (currentUser.CurrentLocation != Id)
+
+                currentUser.CurrentLocationId = Id;
+                currentUser.CurrentStayId = newStay.Id;
+                _context.Update(currentUser);
+
+                await _context.SaveChangesAsync();
+            } else if (currentUser.CurrentLocationId != Id)
             {
-                return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocation });
+                return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });
             }
 
             return RedirectToAction("Details", new { id = Id });
