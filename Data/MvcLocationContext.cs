@@ -18,6 +18,9 @@ namespace TP1_ARQWEB.Data
         {
         }
 
+        public DbSet<InfectionReport> InfectionReport { get; set; }
+
+
         public DbSet<Location> Location { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {

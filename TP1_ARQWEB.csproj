@@ -6,15 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20201017021949_Initial-Create.cs" />
-    <Compile Remove="Migrations\20201017021949_Initial-Create.Designer.cs" />
-    <Compile Remove="Migrations\MvcLocation\20201017022013_Initial-Create2.cs" />
-    <Compile Remove="Migrations\MvcLocation\20201017022013_Initial-Create2.Designer.cs" />
-    <Compile Remove="Migrations\MvcLocation\20201017022201_Initial-Create2.cs" />
-    <Compile Remove="Migrations\MvcLocation\20201017022201_Initial-Create2.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.8" />
@@ -26,10 +17,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="QRCoder" Version="1.3.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\MvcLocation\" />
   </ItemGroup>
 
 </Project>
