@@ -26,6 +26,24 @@ namespace TP1_ARQWEB.Controllers
             _context = context;
         }
 
+
+        [Authorize]
+        public async Task<IActionResult> Details(int id)
+
+        {
+
+            var userIdClaim = UserHelper.getUserId(this);
+
+            if (userIdClaim == null) return NotFound();
+
+            var infectionReport = await _context.InfectionReport
+                    .FirstOrDefaultAsync(m => m.ApplicationUserId == userIdClaim && m.Id == id);
+
+
+            return View(infectionReport);
+
+        }
+
         // GET: InfectionReports/Details/
         public async Task<IActionResult> Index()
         {
@@ -36,7 +54,7 @@ namespace TP1_ARQWEB.Controllers
             {
 
                 var infectionReport = await _context.InfectionReport
-                    .FirstOrDefaultAsync(m => m.ApplicationUserId == userIdClaim);
+                    .FirstOrDefaultAsync(m => m.ApplicationUserId == userIdClaim && m.DischargedDate == null);
                 if (infectionReport == null)
                 {
                     return View("Create");
@@ -62,8 +80,9 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,DiagnosisDate,DischargedDate")] InfectionReport infectionReport)
+        public async Task<IActionResult> Create([Bind("Id,DiagnosisDate")] InfectionReport infectionReport)
         {
+
 
             var claimsIdentity = User.Identity as ClaimsIdentity;
             if (claimsIdentity != null)
@@ -103,7 +122,8 @@ namespace TP1_ARQWEB.Controllers
             var infectionDischarge = new InfectionDischarge
             {
                 InfectionReportId = infectionReport.Id,
-                DiagnosisDate = infectionReport.DiagnosisDate
+                DiagnosisDate = infectionReport.DiagnosisDate,
+                DischargedDate = DateTime.Now
             };
 
 
@@ -117,33 +137,35 @@ namespace TP1_ARQWEB.Controllers
         {
 
 
-            if (ModelState.IsValid)
+            var infectionReport = await _context.InfectionReport.FindAsync(infectionDischarge.InfectionReportId);
+
+            if (infectionReport == null)
             {
-
-                var infectionReport = await _context.InfectionReport.FindAsync(infectionDischarge.InfectionReportId);
-
-                if (infectionReport == null)
-                {
-                    return NotFound();
-                }
-
-
-
-
-                infectionReport.DischargedDate = infectionDischarge.DischargedDate;
-
-                _context.Update(infectionReport);
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index", "Home");
-
-
-
+                return NotFound();
             }
-            return View("Edit", infectionDischarge);
+
+            if (infectionReport.DiagnosisDate >= infectionDischarge.DischargedDate)
+            {
+                ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico");
+            }
+            if (!ModelState.IsValid) return View("Edit", infectionDischarge);
+
+
+
+
+            infectionReport.DischargedDate = infectionDischarge.DischargedDate;
+
+            _context.Update(infectionReport);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Home");
+
+
+
         }
-
-
     }
+
+
 }
+
