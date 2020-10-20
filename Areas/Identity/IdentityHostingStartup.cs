@@ -25,7 +25,13 @@ namespace TP1_ARQWEB.Areas.Identity
                     options.SignIn.RequireConfirmedAccount = false;
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
-                }).AddEntityFrameworkStores<MvcLocationContext>();
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 3;
+
+
+    }).AddEntityFrameworkStores<MvcLocationContext>();
             });
         }
     }
