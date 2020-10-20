@@ -26,14 +26,14 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            MvcLocationContext context)
+            DBContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -19,9 +19,9 @@ namespace TP1_ARQWEB.Controllers
 {
     public class InfectionReportsController : Controller
     {
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
 
-        public InfectionReportsController(MvcLocationContext context)
+        public InfectionReportsController(DBContext context)
         {
             _context = context;
         }

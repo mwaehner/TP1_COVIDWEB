@@ -11,9 +11,9 @@ using TP1_ARQWEB.Models;
 
 namespace TP1_ARQWEB.Data
 {
-    public class MvcLocationContext : IdentityDbContext<ApplicationUser>
+    public class DBContext : IdentityDbContext<ApplicationUser>
     {
-        public MvcLocationContext(DbContextOptions<MvcLocationContext> options)
+        public DBContext(DbContextOptions<DBContext> options)
             : base(options)
         {
         }

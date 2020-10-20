@@ -16,9 +16,9 @@ namespace TP1_ARQWEB.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
-                services.AddDbContext<MvcLocationContext>(options =>
+                services.AddDbContext<DBContext>(options =>
                     options.UseSqlServer(
-                        context.Configuration.GetConnectionString("MvcLocationContext")));
+                        context.Configuration.GetConnectionString("DBContextConnection")));
 
                 services.AddDefaultIdentity<ApplicationUser>(options =>
                 {
@@ -31,7 +31,7 @@ namespace TP1_ARQWEB.Areas.Identity
                     options.Password.RequiredLength = 3;
 
 
-    }).AddEntityFrameworkStores<MvcLocationContext>();
+    }).AddEntityFrameworkStores<DBContext>();
             });
         }
     }

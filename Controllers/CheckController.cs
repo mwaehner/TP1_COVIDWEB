@@ -19,10 +19,10 @@ namespace TP1_ARQWEB.Controllers
     public class CheckController : Controller
     {
 
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public CheckController(UserManager<ApplicationUser> userManager, MvcLocationContext context)
+        public CheckController(UserManager<ApplicationUser> userManager, DBContext context)
         {
             _userManager = userManager;
             _context = context;

@@ -28,7 +28,7 @@ namespace TP1_ARQWEB
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<MvcLocationContext>();
+                    var context = services.GetRequiredService<DBContext>();
                     context.Database.EnsureCreated();
                     // DbInitializer.Initialize(context);
                 }

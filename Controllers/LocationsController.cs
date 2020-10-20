@@ -16,10 +16,10 @@ namespace TP1_ARQWEB.Controllers
 {
     public class LocationsController : Controller
     {
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public LocationsController(UserManager<ApplicationUser> userManager, MvcLocationContext context)
+        public LocationsController(UserManager<ApplicationUser> userManager, DBContext context)
         {
             _userManager = userManager;
             _context = context;
