@@ -20,10 +20,12 @@ namespace TP1_ARQWEB.Controllers
     public class InfectionReportsController : Controller
     {
         private readonly DBContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public InfectionReportsController(DBContext context)
+        public InfectionReportsController(DBContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
 
@@ -84,25 +86,15 @@ namespace TP1_ARQWEB.Controllers
         {
 
 
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            var currentUser = await _userManager.GetUserAsync(User);
+            infectionReport.ApplicationUserId = currentUser.Id;
+            _context.Add(infectionReport);
+            await _context.SaveChangesAsync();
 
-                if (userIdClaim != null)
-                {
-                    var userIdValue = userIdClaim.Value;
-                    infectionReport.ApplicationUserId = userIdValue;
-                    _context.Add(infectionReport);
-                    await _context.SaveChangesAsync();
+            currentUser.Infected = true;
+            await _userManager.UpdateAsync(currentUser);
 
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            return NotFound();
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize]
@@ -150,14 +142,16 @@ namespace TP1_ARQWEB.Controllers
             }
             if (!ModelState.IsValid) return View("Edit", infectionDischarge);
 
-
-
-
             infectionReport.DischargedDate = infectionDischarge.DischargedDate;
 
             _context.Update(infectionReport);
 
             await _context.SaveChangesAsync();
+
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            currentUser.Infected = false;
+            await _userManager.UpdateAsync(currentUser);
 
             return RedirectToAction("Index", "Home");
 
