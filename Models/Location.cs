@@ -21,7 +21,7 @@ namespace TP1_ARQWEB.Models
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Longitud { get; set; }
+        public int CantidadPersonasDentro { get; set; }
 
-        // qr
     }
 }

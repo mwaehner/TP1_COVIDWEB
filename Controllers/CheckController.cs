@@ -72,6 +72,7 @@ namespace TP1_ARQWEB.Controllers
             ViewData["userInLocation"] = userInLocation;
             ViewData["userAtRisk"] = currentUser.AtRisk;
             ViewData["userInfected"] = currentUser.Infected;
+            ViewData["locationFull"] = location.CantidadPersonasDentro >= location.Capacidad;
 
             return View(location);
         }
@@ -92,13 +93,19 @@ namespace TP1_ARQWEB.Controllers
                 Stay currentStay = await _context.Stay
                 .FirstOrDefaultAsync(m => m.Id == currentUser.CurrentStayId);
 
+                var location = await _context.Location.FindAsync(currentUser.CurrentLocationId);
+                location.CantidadPersonasDentro--;
+                _context.Update(location);
+
                 currentUser.CurrentLocationId = null;
                 currentUser.CurrentStayId = null;
                 await _userManager.UpdateAsync(currentUser);
 
                 currentStay.TimeOfExit = DateTime.Now;
                 _context.Update(currentStay);
+
                 await _context.SaveChangesAsync();
+
             }
 
             return RedirectToAction("Details", new { id = Id });
@@ -113,8 +120,10 @@ namespace TP1_ARQWEB.Controllers
         {
           
             var currentUser = await _userManager.GetUserAsync(User);
+            var location = await _context.Location.FindAsync(Id);
 
-            if (!currentUser.Infected)
+
+            if (!currentUser.Infected && location.CantidadPersonasDentro < location.Capacidad)
             {
 
                 if (currentUser.CurrentLocationId == null)
@@ -133,6 +142,11 @@ namespace TP1_ARQWEB.Controllers
                     currentUser.CurrentLocationId = Id;
                     currentUser.CurrentStayId = newStay.Id;
                     await _userManager.UpdateAsync(currentUser);
+
+                    
+                    location.CantidadPersonasDentro++;
+                    _context.Update(location);
+                    await _context.SaveChangesAsync();
 
                 }
                 else if (currentUser.CurrentLocationId != Id)

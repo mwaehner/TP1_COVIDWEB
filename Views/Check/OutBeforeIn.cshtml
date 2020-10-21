@@ -11,7 +11,7 @@
 <h2>Es necesario abandonar la locación para entrar a otra.</h2>
 <h2>Quiere hacer Check Out ahora?</h2>
 
-
+<div class="btn-group">
     <form asp-action="Out" asp-route-id="@idActualLocation" method="post">
         <div class="form-group">
             <input type="submit" value="Si" class="btn btn-primary" />
@@ -19,8 +19,10 @@
     </form>
     <form asp-action="Details" asp-route-id="@idActualLocation" method="post">
         <div class="form-group">
-            <input type="submit" value="No" class="btn btn-primary" />
+            <input type="submit" value="No" class="btn btn-default" />
         </div>
     </form>
+
+</div>
 
 
