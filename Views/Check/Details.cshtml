@@ -32,8 +32,25 @@
     else inOut = "In";
 
 }
-    <form asp-action="@inOut" asp-route-id="@Model.Id" method="post">
-        <div class="form-group">
-            <input type="submit" value="Check @inOut" class="btn btn-primary" />
-        </div>
-    </form>
+    
+
+<div>
+
+    @if ((bool)ViewData["userInfected"])
+    {
+
+        <p class="text-danger"> Usted está actualmente infectado y no puede acceder a nuevas Locaciones. </p>}
+    else
+    {
+        <form asp-action="@inOut" asp-route-id="@Model.Id" method="post">
+            <div class="form-group">
+                <input type="submit" value="Check @inOut" class="btn btn-primary" />
+            </div>
+        </form>
+
+        @if ((bool)ViewData["userAtRisk"])
+        {
+            <p class="text-danger"> ADVERTENCIA: Usted está actualmente en riesgo de haber sido contagiado. Por favor considere aislarse en su hogar. </p>
+        }
+    }
+</div>

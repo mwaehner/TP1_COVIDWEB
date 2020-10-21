@@ -70,6 +70,8 @@ namespace TP1_ARQWEB.Controllers
             bool userInLocation = currentUser.CurrentLocationId == location.Id;
 
             ViewData["userInLocation"] = userInLocation;
+            ViewData["userAtRisk"] = currentUser.AtRisk;
+            ViewData["userInfected"] = currentUser.Infected;
 
             return View(location);
         }
@@ -112,26 +114,31 @@ namespace TP1_ARQWEB.Controllers
           
             var currentUser = await _userManager.GetUserAsync(User);
 
-            if (currentUser.CurrentLocationId == null)
+            if (!currentUser.Infected)
             {
-               
-                Stay newStay = new Stay
+
+                if (currentUser.CurrentLocationId == null)
                 {
-                    UserId = currentUser.Id,
-                    LocationId = (int)Id,
-                    TimeOfEntrance = DateTime.Now,
-                    TimeOfExit = null
-                };
-                _context.Add(newStay);
-                await _context.SaveChangesAsync();
 
-                currentUser.CurrentLocationId = Id;
-                currentUser.CurrentStayId = newStay.Id;
-                await _userManager.UpdateAsync(currentUser);
+                    Stay newStay = new Stay
+                    {
+                        UserId = currentUser.Id,
+                        LocationId = (int)Id,
+                        TimeOfEntrance = DateTime.Now,
+                        TimeOfExit = null
+                    };
+                    _context.Add(newStay);
+                    await _context.SaveChangesAsync();
 
-            } else if (currentUser.CurrentLocationId != Id)
-            {
-                return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });
+                    currentUser.CurrentLocationId = Id;
+                    currentUser.CurrentStayId = newStay.Id;
+                    await _userManager.UpdateAsync(currentUser);
+
+                }
+                else if (currentUser.CurrentLocationId != Id)
+                {
+                    return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });
+                }
             }
 
             return RedirectToAction("Details", new { id = Id });
