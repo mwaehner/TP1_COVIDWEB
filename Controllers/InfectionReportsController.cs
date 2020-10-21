@@ -11,8 +11,6 @@ using TP1_ARQWEB.Models;
 using Microsoft.AspNetCore.Identity;
 using TP1_ARQWEB.Areas.Identity.Data;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using TP1_ARQWEB.Helpers;
 
 namespace TP1_ARQWEB.Controllers
@@ -79,6 +77,18 @@ namespace TP1_ARQWEB.Controllers
         // POST: InfectionReports/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+
+        private bool intersectAtLeast15Minutes(Stay stay1, Stay stay2)
+        {
+            if (stay1.TimeOfExit == null || stay2.TimeOfExit == null) return false; // esto capaz es medio polemico, caso borde
+            if (stay1.TimeOfExit < stay1.TimeOfEntrance.AddMinutes(15) || stay2.TimeOfExit < stay2.TimeOfEntrance.AddMinutes(15)) return false;
+            if (stay1.TimeOfEntrance <= stay2.TimeOfEntrance && stay2.TimeOfEntrance.AddMinutes(15) <= stay1.TimeOfExit) return true;
+            if (stay2.TimeOfEntrance <= stay1.TimeOfEntrance && stay1.TimeOfEntrance.AddMinutes(15) <= stay2.TimeOfExit) return true;
+            return false;
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -93,6 +103,25 @@ namespace TP1_ARQWEB.Controllers
 
             currentUser.Infected = true;
             await _userManager.UpdateAsync(currentUser);
+
+            var stays = await _context.Stay.ToListAsync();
+            List<Stay> recentUserLocations = new List<Stay>();
+            foreach(var stay in stays)
+            {
+                if(stay.UserId == currentUser.Id && stay.TimeOfEntrance.AddDays(14)>=infectionReport.DiagnosisDate)
+                {
+                    foreach (var stay2 in stays)
+                    {
+                        if(stay2.UserId != stay.UserId && stay2.LocationId == stay.LocationId && intersectAtLeast15Minutes(stay, stay2))
+                        {
+                            var userAtRisk = await _userManager.FindByIdAsync(stay2.UserId);
+                            userAtRisk.AtRisk = true;
+                            await _userManager.UpdateAsync(currentUser);
+                        }
+                    }
+                }
+            }
+
 
             return RedirectToAction(nameof(Index));
         }

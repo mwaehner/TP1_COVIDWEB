@@ -1,8 +1,20 @@
-﻿@{
+﻿@model bool
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
+
+
 <div class="text-center">
-    <h1 class="display-4">Bienvenido a nuestro sitio. </h1>
-    
+    @if ((bool)Model)
+    {
+        <h1 class="display-4">Estas en riesgo, estuviste en contacto recientemente con alguien que dio positivo de coronavirus. </h1>
+    }
+    else
+    {
+        <h1 class="display-4">Bienvenido a nuestro sitio. </h1>
+    }
+
+
 </div>

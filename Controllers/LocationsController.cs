@@ -41,6 +41,7 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
+
             var location = await _context.Location
                 .FirstOrDefaultAsync(m => m.Id == id);
             string userIdValue = _userManager.GetUserId(User);
