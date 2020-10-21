@@ -9,15 +9,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
+using Microsoft.AspNetCore.Identity;
+using TP1_ARQWEB.Areas.Identity.Data;
 
 namespace TP1_ARQWEB.Controllers
 {
     public class LocationsController : Controller
     {
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LocationsController(MvcLocationContext context)
+        public LocationsController(UserManager<ApplicationUser> userManager, DBContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
@@ -37,31 +41,14 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
+
             var location = await _context.Location
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (location == null)
+            string userIdValue = _userManager.GetUserId(User);
+            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
             {
                 return NotFound();
             }
-
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null)
-                {
-                    var userIdValue = userIdClaim.Value;
-                    if (userIdValue != location.IdPropietario)
-                    {
-                        return NotFound();
-                    }
-                }
-            }
-
             return View(location);
         }
 
@@ -76,29 +63,11 @@ namespace TP1_ARQWEB.Controllers
 
             var location = await _context.Location
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (location == null)
+            string userIdValue = _userManager.GetUserId(User);
+            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
             {
                 return NotFound();
             }
-
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null)
-                {
-                    var userIdValue = userIdClaim.Value;
-                    if (userIdValue != location.IdPropietario)
-                    {
-                        return NotFound();
-                    }
-                }
-            }
-
             return View(location);
         }
 
@@ -115,28 +84,20 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Capacidad,IdPropietario,Latitud,Longitud")] Location location)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,IdPropietario,Capacidad,Latitud,Longitud")] Location location)
         {
             if (ModelState.IsValid)
             {
                 var claimsIdentity = User.Identity as ClaimsIdentity;
-                if (claimsIdentity != null)
+                string userIdValue = _userManager.GetUserId(User);
+                if (!String.IsNullOrWhiteSpace(userIdValue))
                 {
-                    // the principal identity is a claims identity.
-                    // now we need to find the NameIdentifier claim
-                    var userIdClaim = claimsIdentity.Claims
-                        .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+                    location.IdPropietario = userIdValue;
+                    _context.Add(location);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
 
-                    if (userIdClaim != null)
-                    {
-                        var userIdValue = userIdClaim.Value;
-                        location.IdPropietario = userIdValue;
-                        _context.Add(location);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                
+                }                
             }
             return View(location);
         }
@@ -151,31 +112,15 @@ namespace TP1_ARQWEB.Controllers
             }
 
 
+            
 
             var location = await _context.Location.FindAsync(id);
-            if (location == null)
+            string userIdValue = _userManager.GetUserId(User);
+            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
             {
                 return NotFound();
             }
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null)
-                {
-                    var userIdValue = userIdClaim.Value;
-                    if(userIdValue != location.IdPropietario)
-                    {
-                        return NotFound();
-                    }
-                }
-            }
-
-
+            
             return View(location);
         }
 
@@ -185,7 +130,7 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Capacidad,Latitud,Longitud")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,IdPropietario,Capacidad,Latitud,Longitud")] Location location)
         {
             if (id != location.Id)
             {
@@ -196,21 +141,13 @@ namespace TP1_ARQWEB.Controllers
             {
                 try
                 {
-                    var claimsIdentity = User.Identity as ClaimsIdentity;
-                    if (claimsIdentity != null)
-                    {
-                        // the principal identity is a claims identity.
-                        // now we need to find the NameIdentifier claim
-                        var userIdClaim = claimsIdentity.Claims
-                            .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
 
-                        if (userIdClaim != null)
-                        {
-                            var userIdValue = userIdClaim.Value;
-                            location.IdPropietario = userIdValue;
-                            _context.Update(location);
-                            await _context.SaveChangesAsync();
-                        }
+                    string userIdValue = _userManager.GetUserId(User);
+                    if (! String.IsNullOrWhiteSpace(userIdValue))
+                    {
+                        //location.IdPropietario = userIdValue;
+                        _context.Update(location);
+                        await _context.SaveChangesAsync();
                     }
                     
                 }
@@ -241,30 +178,13 @@ namespace TP1_ARQWEB.Controllers
 
             var location = await _context.Location
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (location == null)
+            string userIdValue = _userManager.GetUserId(User);
+            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
             {
                 return NotFound();
             }
-
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null)
-                {
-                    var userIdValue = userIdClaim.Value;
-                    if (userIdValue != location.IdPropietario)
-                    {
-                        return NotFound();
-                    }
-                }
-            }
-
             return View(location);
+            
         }
 
         // POST: Locations/Delete/5

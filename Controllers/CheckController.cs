@@ -19,10 +19,10 @@ namespace TP1_ARQWEB.Controllers
     public class CheckController : Controller
     {
 
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public CheckController(UserManager<ApplicationUser> userManager, MvcLocationContext context)
+        public CheckController(UserManager<ApplicationUser> userManager, DBContext context)
         {
             _userManager = userManager;
             _context = context;
@@ -44,11 +44,9 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            dynamic model = new ExpandoObject();
-            model.location = location;
-            model.idActualLocation = idActual;
+            ViewData["idActualLocation"] = idActual;
 
-            return View(model);
+            return View(location);
         }
 
         // GET: Check/Details/5
@@ -67,21 +65,16 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            string userIdValue = _userManager.GetUserId(User);
-
-            
-
-            UserAppInfo currentUser = await _context.UserAppInfo
-                .FirstOrDefaultAsync(m => m.Id == userIdValue);
+            var currentUser = await _userManager.GetUserAsync(User);
 
             bool userInLocation = currentUser.CurrentLocationId == location.Id;
 
-            dynamic model = new ExpandoObject();
-            model.location = location;
-            model.userInLocation = userInLocation;
+            ViewData["userInLocation"] = userInLocation;
+            ViewData["userAtRisk"] = currentUser.AtRisk;
+            ViewData["userInfected"] = currentUser.Infected;
+            ViewData["locationFull"] = location.CantidadPersonasDentro >= location.Capacidad;
 
-
-            return View(model);
+            return View(location);
         }
 
         // POST: Locations/Check/Out/5
@@ -92,23 +85,27 @@ namespace TP1_ARQWEB.Controllers
             // el parametro Id no es la Id de la locacion de la que se hará Check Out sino de la locacion
             // cuyos detalles se mostran luego del Check Out
         {
-            string userIdValue = _userManager.GetUserId(User);
 
-            UserAppInfo currentUser = await _context.UserAppInfo
-                .FirstOrDefaultAsync(m => m.Id == userIdValue);
+            var currentUser = await _userManager.GetUserAsync(User);
 
             if (currentUser.CurrentLocationId != null)
             {
                 Stay currentStay = await _context.Stay
                 .FirstOrDefaultAsync(m => m.Id == currentUser.CurrentStayId);
 
+                var location = await _context.Location.FindAsync(currentUser.CurrentLocationId);
+                location.CantidadPersonasDentro--;
+                _context.Update(location);
+
                 currentUser.CurrentLocationId = null;
                 currentUser.CurrentStayId = null;
-                _context.Update(currentUser);
+                await _userManager.UpdateAsync(currentUser);
 
                 currentStay.TimeOfExit = DateTime.Now;
                 _context.Update(currentStay);
+
                 await _context.SaveChangesAsync();
+
             }
 
             return RedirectToAction("Details", new { id = Id });
@@ -121,32 +118,41 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> In(int? Id)
         {
-            string userIdValue = _userManager.GetUserId(User);
+          
+            var currentUser = await _userManager.GetUserAsync(User);
+            var location = await _context.Location.FindAsync(Id);
 
-            UserAppInfo currentUser = await _context.UserAppInfo
-                .FirstOrDefaultAsync(m => m.Id == userIdValue);
 
-            if (currentUser.CurrentLocationId == null)
+            if (!currentUser.Infected && location.CantidadPersonasDentro < location.Capacidad)
             {
-               
-                Stay newStay = new Stay
+
+                if (currentUser.CurrentLocationId == null)
                 {
-                    UserId = currentUser.Id,
-                    LocationId = (int)Id,
-                    TimeOfEntrance = DateTime.Now,
-                    TimeOfExit = null
-                };
-                _context.Add(newStay);
-                await _context.SaveChangesAsync();
 
-                currentUser.CurrentLocationId = Id;
-                currentUser.CurrentStayId = newStay.Id;
-                _context.Update(currentUser);
+                    Stay newStay = new Stay
+                    {
+                        UserId = currentUser.Id,
+                        LocationId = (int)Id,
+                        TimeOfEntrance = DateTime.Now,
+                        TimeOfExit = null
+                    };
+                    _context.Add(newStay);
+                    await _context.SaveChangesAsync();
 
-                await _context.SaveChangesAsync();
-            } else if (currentUser.CurrentLocationId != Id)
-            {
-                return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });
+                    currentUser.CurrentLocationId = Id;
+                    currentUser.CurrentStayId = newStay.Id;
+                    await _userManager.UpdateAsync(currentUser);
+
+                    
+                    location.CantidadPersonasDentro++;
+                    _context.Update(location);
+                    await _context.SaveChangesAsync();
+
+                }
+                else if (currentUser.CurrentLocationId != Id)
+                {
+                    return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });
+                }
             }
 
             return RedirectToAction("Details", new { id = Id });

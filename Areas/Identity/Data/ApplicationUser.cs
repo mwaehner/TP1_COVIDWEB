@@ -17,5 +17,11 @@ namespace TP1_ARQWEB.Areas.Identity.Data
         [PersonalData]
         [Column(TypeName = "nvarchar(100)")]
         public string LastName { get; set; }
+
+        public int? CurrentLocationId { get; set; }
+        public int? CurrentStayId { get; set; }
+
+        public bool Infected { get; set; }
+        public bool AtRisk { get; set; }
     }
 }
