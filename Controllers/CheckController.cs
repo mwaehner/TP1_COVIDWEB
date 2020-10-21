@@ -44,11 +44,9 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            dynamic model = new ExpandoObject();
-            model.location = location;
-            model.idActualLocation = idActual;
+            ViewData["idActualLocation"] = idActual;
 
-            return View(model);
+            return View(location);
         }
 
         // GET: Check/Details/5
@@ -67,21 +65,13 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            string userIdValue = _userManager.GetUserId(User);
-
-            
-
-            UserAppInfo currentUser = await _context.UserAppInfo
-                .FirstOrDefaultAsync(m => m.Id == userIdValue);
+            var currentUser = await _userManager.GetUserAsync(User);
 
             bool userInLocation = currentUser.CurrentLocationId == location.Id;
 
-            dynamic model = new ExpandoObject();
-            model.location = location;
-            model.userInLocation = userInLocation;
+            ViewData["userInLocation"] = userInLocation;
 
-
-            return View(model);
+            return View(location);
         }
 
         // POST: Locations/Check/Out/5
@@ -92,10 +82,8 @@ namespace TP1_ARQWEB.Controllers
             // el parametro Id no es la Id de la locacion de la que se hará Check Out sino de la locacion
             // cuyos detalles se mostran luego del Check Out
         {
-            string userIdValue = _userManager.GetUserId(User);
 
-            UserAppInfo currentUser = await _context.UserAppInfo
-                .FirstOrDefaultAsync(m => m.Id == userIdValue);
+            var currentUser = await _userManager.GetUserAsync(User);
 
             if (currentUser.CurrentLocationId != null)
             {
@@ -104,7 +92,7 @@ namespace TP1_ARQWEB.Controllers
 
                 currentUser.CurrentLocationId = null;
                 currentUser.CurrentStayId = null;
-                _context.Update(currentUser);
+                await _userManager.UpdateAsync(currentUser);
 
                 currentStay.TimeOfExit = DateTime.Now;
                 _context.Update(currentStay);
@@ -121,10 +109,8 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> In(int? Id)
         {
-            string userIdValue = _userManager.GetUserId(User);
-
-            UserAppInfo currentUser = await _context.UserAppInfo
-                .FirstOrDefaultAsync(m => m.Id == userIdValue);
+          
+            var currentUser = await _userManager.GetUserAsync(User);
 
             if (currentUser.CurrentLocationId == null)
             {
@@ -141,9 +127,8 @@ namespace TP1_ARQWEB.Controllers
 
                 currentUser.CurrentLocationId = Id;
                 currentUser.CurrentStayId = newStay.Id;
-                _context.Update(currentUser);
+                await _userManager.UpdateAsync(currentUser);
 
-                await _context.SaveChangesAsync();
             } else if (currentUser.CurrentLocationId != Id)
             {
                 return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });

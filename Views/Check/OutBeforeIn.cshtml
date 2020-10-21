@@ -1,22 +1,23 @@
-﻿@model dynamic
+﻿@model TP1_ARQWEB.Models.Location
 
 @{
     ViewData["Title"] = "Details";
+    var idActualLocation = ViewData["idActualLocation"];
 }
 
 <h1>Advertencia</h1>
 
-<h2>Usted ya está en la locación @Model.location.Nombre</h2>
+<h2>Usted ya está en la locación @Model.Nombre</h2>
 <h2>Es necesario abandonar la locación para entrar a otra.</h2>
 <h2>Quiere hacer Check Out ahora?</h2>
 
 
-    <form asp-action="Out" asp-route-id="@Model.idActualLocation" method="post">
+    <form asp-action="Out" asp-route-id="@idActualLocation" method="post">
         <div class="form-group">
             <input type="submit" value="Si" class="btn btn-primary" />
         </div>
     </form>
-    <form asp-action="Details" asp-route-id="@Model.idActualLocation" method="post">
+    <form asp-action="Details" asp-route-id="@idActualLocation" method="post">
         <div class="form-group">
             <input type="submit" value="No" class="btn btn-primary" />
         </div>

@@ -1,4 +1,4 @@
-﻿@model dynamic
+﻿@model TP1_ARQWEB.Models.Location
 
 @{
     ViewData["Title"] = "Details";
@@ -14,13 +14,13 @@
             Nombre
         </dt>
         <dd class="col-sm-10">
-            @Model.location.Nombre
+            @Model.Nombre
         </dd>
         <dt class="col-sm-2">
             Capacidad
         </dt>
         <dd class="col-sm-10">
-            @Model.location.Capacidad
+            @Model.Capacidad
         </dd>
     </dl>
 </div>
@@ -28,16 +28,16 @@
 @{
     string inOut;
 
-    if (Model.userInLocation) inOut = "Out";
+    if ((bool)ViewData["userInLocation"]) inOut = "Out";
     else inOut = "In";
 
 }
-    <form asp-action="@inOut" asp-route-id="@Model.location.Id" method="post">
+    <form asp-action="@inOut" asp-route-id="@Model.Id" method="post">
         <div class="form-group">
             <input type="submit" value="Check @inOut" class="btn btn-primary" />
         </div>
     </form>
 
 <div>
-    <a asp-action="@inOut" asp-route-id="@Model.location.Id">Check @inOut</a>
+    <a asp-action="@inOut" asp-route-id="@Model.Id">Check @inOut</a>
 </div>
