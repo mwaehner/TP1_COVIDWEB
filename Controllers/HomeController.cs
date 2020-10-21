@@ -11,6 +11,7 @@ using TP1_ARQWEB.Models;
 namespace TP1_ARQWEB.Controllers
 {
     [Authorize]
+    //solamente las personas que esten autenticadas pueden ingresar al home
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
