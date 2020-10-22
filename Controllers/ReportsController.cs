@@ -157,6 +157,7 @@ namespace TP1_ARQWEB.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Reports/Discharge
         [Authorize]
         public async Task<IActionResult> Discharge()
         {
@@ -183,6 +184,7 @@ namespace TP1_ARQWEB.Controllers
             return View(infectionDischarge);
         }
 
+        // POST: Reports/Discharge
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -212,6 +214,7 @@ namespace TP1_ARQWEB.Controllers
 
             var currentUser = await _userManager.GetUserAsync(User);
             currentUser.Infected = false;
+            currentUser.AtRisk = false;
             await _userManager.UpdateAsync(currentUser);
 
             return RedirectToAction("Index", "Home");
@@ -219,6 +222,40 @@ namespace TP1_ARQWEB.Controllers
 
 
         }
+
+        // GET: Reports/NegativeTest
+        [Authorize]
+        public async Task<IActionResult> NegativeTest()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (!currentUser.AtRisk)
+                return RedirectToAction(nameof(Index));
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> NegativeTest([Bind("Id,TestDate")] NegativeTest negativeTest)
+        {
+
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            negativeTest.ApplicationUserId = currentUser.Id;
+            _context.Add(negativeTest);
+            await _context.SaveChangesAsync();
+
+            currentUser.AtRisk = false;
+            await _userManager.UpdateAsync(currentUser);
+
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
     }
 
 
