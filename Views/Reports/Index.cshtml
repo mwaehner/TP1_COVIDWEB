@@ -16,17 +16,17 @@
     if (Model.UserInfected)
     {
         disableInfected = "disabled";
-        infectionReportClass = "btn-default";
+        infectionReportClass = "";
     }
     if (!Model.UserInfected)
     {
         disableDischarge = "disabled";
-        dischargeClass = "btn-default";
+        dischargeClass = "";
     }
     if (!Model.UserAtRisk || Model.UserInfected)
     {
         disableNegativeTest = "disabled";
-        negativeTestClass = "btn-default";
+        negativeTestClass = "";
     }
 
 }

@@ -67,14 +67,16 @@ namespace TP1_ARQWEB.Controllers
 
             var currentUser = await _userManager.GetUserAsync(User);
 
-            bool userInLocation = currentUser.CurrentLocationId == location.Id;
+            CheckDetailsViewModel model = new CheckDetailsViewModel
+            {
+                location = location,
+                UserAtRisk = currentUser.AtRisk,
+                UserInfected = currentUser.Infected,
+                LocationFull = location.CantidadPersonasDentro >= location.Capacidad,
+                UserInLocation = currentUser.CurrentLocationId == location.Id
+            };
 
-            ViewData["userInLocation"] = userInLocation;
-            ViewData["userAtRisk"] = currentUser.AtRisk;
-            ViewData["userInfected"] = currentUser.Infected;
-            ViewData["locationFull"] = location.CantidadPersonasDentro >= location.Capacidad;
-
-            return View(location);
+            return View(model);
         }
 
         // POST: Locations/Check/Out/5
