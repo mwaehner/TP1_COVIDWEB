@@ -11,6 +11,7 @@ using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
 using Microsoft.AspNetCore.Identity;
 using TP1_ARQWEB.Areas.Identity.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -143,13 +144,13 @@ namespace TP1_ARQWEB.Controllers
                 {
 
                     string userIdValue = _userManager.GetUserId(User);
-                    if (! String.IsNullOrWhiteSpace(userIdValue))
+                    if (!String.IsNullOrWhiteSpace(userIdValue))
                     {
                         //location.IdPropietario = userIdValue;
                         _context.Update(location);
                         await _context.SaveChangesAsync();
                     }
-                    
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -166,6 +167,48 @@ namespace TP1_ARQWEB.Controllers
             }
             return View(location);
         }
+
+        // GET: Locations/Image/5
+        [Authorize]
+        public async Task<IActionResult> Image(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var location = await _context.Location.FindAsync(id);
+            string userIdValue = _userManager.GetUserId(User);
+            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
+            {
+                return NotFound();
+            }
+
+            return View(location);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Image(int? id, IFormFile file)
+        {
+            if (id == null) return NotFound();
+
+            if (file != null && file.Length > 0)
+            {
+                var location = await _context.Location.FindAsync(id);
+                location.Image = new byte[file.Length];
+
+                file.OpenReadStream().Read(location.Image, 0, (int)file.Length);
+                _context.Update(location);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Image));
+        }
+
+
+        
 
         // GET: Locations/Delete/5
         [Authorize]

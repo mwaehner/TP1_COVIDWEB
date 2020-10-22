@@ -1,0 +1,30 @@
+﻿@model TP1_ARQWEB.Models.Location
+
+@{
+    ViewData["Title"] = "Imágen";
+}
+
+<h1>Imágen</h1>
+
+
+@if (Model.Image != null) {
+        <img src='@Url.Action("ShowLocationImage", "Image", new { id = Model.Id })' />
+}
+
+@using (Html.BeginForm("Image", "Locations", FormMethod.Post,
+                           new { enctype = "multipart/form-data" }))
+{
+    <label for="file">Subir imágen:</label>
+    <input type="file" name="file" id="file" style="width: 100%;" />
+
+    <input type="submit" value="Upload" class="submit" />
+
+}
+
+<div>
+    <a asp-action="Index">Volver a la lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
