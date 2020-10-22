@@ -1,0 +1,48 @@
+﻿@model TP1_ARQWEB.Models.InfectionDischarge
+
+@{
+    ViewData["Title"] = "Dar de Alta";
+}
+
+
+
+<h4>Informe de Altá Médica</h4>
+<p>Ingrese la fecha para la cual el médico le firmó el alta de la enfermedad.</p>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Discharge">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @Html.DisplayNameFor(m => m.DiagnosisDate)
+                @Html.DisplayFor(m => m.DiagnosisDate)
+            </div>
+            <div class="form-group">
+                <label asp-for="DischargedDate" class="control-label"></label>
+                <input asp-for="DischargedDate" class="form-control" />
+                <asp:CompareValidator ID="cmpDates" runat="server" ControlToValidate="DiagnosisDate"
+                                      SetFocusOnError="true" ControlToCompare="DischargedDate"
+                                      ErrorMessage="EndDate must be greater than StartDate"
+                                      Operator="LessThan"
+                                      ValidationGroup="vg" Type="Date"
+                                      CultureInvariantValues="true"></asp:CompareValidator>
+                <span asp-validation-for="DischargedDate" class="text-danger"></span>
+
+
+            </div>
+            @Html.HiddenFor(m => m.InfectionReportId)
+            @Html.HiddenFor(m => m.DiagnosisDate)
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,44 @@
+﻿@model TP1_ARQWEB.Models.ReportsIndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@{ 
+    string disableInfected = "";
+    string disableDischarge = "";
+    string disableNegativeTest = "";
+
+    string infectionReportClass = "btn-danger";
+    string dischargeClass = "btn-primary";
+    string negativeTestClass = "btn-primary";
+
+    if (Model.UserInfected)
+    {
+        disableInfected = "disabled";
+        infectionReportClass = "btn-default";
+    }
+    if (!Model.UserInfected)
+    {
+        disableDischarge = "disabled";
+        dischargeClass = "btn-default";
+    }
+    if (!Model.UserAtRisk || Model.UserInfected)
+    {
+        disableNegativeTest = "disabled";
+        negativeTestClass = "btn-default";
+    }
+
+}
+
+<h1>Reportes</h1>
+
+<h2>Usted está actualmente @Model.UserStateString </h2>
+
+<div class="btn-group-vertical">
+
+    <input style ="margin-bottom:14px" class="btn  @infectionReportClass" type="button" value="Reportar Contagio" onclick="location.href='@Url.Action("InfectionReport", "Reports")'" @disableInfected />
+    <input style ="margin-bottom:14px" class="btn  @dischargeClass" type="button" value="Reportar Alta" onclick="location.href='@Url.Action("Discharge", "Reports")'" @disableDischarge/>
+    <input style ="margin-bottom:14px" class="btn  @negativeTestClass"type="button" value="Reportar Test Negativo" onclick="location.href='@Url.Action("NegativeTest", "Reports")'" @disableNegativeTest/>
+
+</div>
