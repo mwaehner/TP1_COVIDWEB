@@ -48,46 +48,22 @@ namespace TP1_ARQWEB.Controllers
         public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            string userStateString;
 
-            if (currentUser.Infected) userStateString = "infectado";
-            else if (currentUser.AtRisk) userStateString = "en riesgo de haber sido infectado";
-            else userStateString = "en condiciones normales";
+            var infectionReport = await _context.InfectionReport
+                    .FirstOrDefaultAsync(m => m.ApplicationUserId == currentUser.Id && m.DischargedDate == null);
+
+            var DiagnosisDate = infectionReport?.DiagnosisDate;
 
             ReportsIndexViewModel model = new ReportsIndexViewModel
             {
                 UserAtRisk = currentUser.AtRisk,
                 UserInfected = currentUser.Infected,
-                UserStateString = userStateString
+                DiagnosisDate = DiagnosisDate
             };
 
             return View(model);
         }
 
-        // GET: InfectionReports/Details/
-        /*public async Task<IActionResult> InfectionReport()
-        {
-
-            var userIdClaim = UserHelper.getUserId(this);
-
-            if (userIdClaim != null)
-            {
-
-                var infectionReport = await _context.InfectionReport
-                    .FirstOrDefaultAsync(m => m.ApplicationUserId == userIdClaim && m.DischargedDate == null);
-                if (infectionReport == null)
-                {
-                    return View("Create");
-                }
-
-                return View("Details", infectionReport);
-            }
-
-            return View("Create");
-
-        }*/
-
-       
 
         [Authorize]
         // GET: Reports/InfectionReport

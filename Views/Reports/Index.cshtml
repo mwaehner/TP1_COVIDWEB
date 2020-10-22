@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-@{ 
+@{
     string disableInfected = "";
     string disableDischarge = "";
     string disableNegativeTest = "";
@@ -31,14 +31,40 @@
 
 }
 
-<h1>Reportes</h1>
+<h4>Reportes</h4>
 
-<h2>Usted está actualmente @Model.UserStateString </h2>
+@if (Model.UserInfected)
+{
+    <div>
+        <p>
+            Usted ha informado su contagio; utilizaremos esta información para rastrear a sus contactos.
+        </p>
+        <hr />
+        <dl class="row">
+
+            <dt class="col-sm-4">
+                Fecha de Diagnóstico
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.DiagnosisDate)
+            </dd>
+        </dl>
+    </div>
+}
+else if (Model.UserAtRisk)
+{
+    <p>
+        Usted está en riesgo de haber sido contagiado. En lo posible, realice un Test de Coronavirus y, en caso de resultar negativo, infórmelo.
+    </p>
+} else
+{
+    <p>Usted está actualmente en condiciones normales.</p>
+}
 
 <div class="btn-group-vertical">
 
-    <input style ="margin-bottom:14px" class="btn  @infectionReportClass" type="button" value="Reportar Contagio" onclick="location.href='@Url.Action("InfectionReport", "Reports")'" @disableInfected />
-    <input style ="margin-bottom:14px" class="btn  @dischargeClass" type="button" value="Reportar Alta" onclick="location.href='@Url.Action("Discharge", "Reports")'" @disableDischarge/>
-    <input style ="margin-bottom:14px" class="btn  @negativeTestClass"type="button" value="Reportar Test Negativo" onclick="location.href='@Url.Action("NegativeTest", "Reports")'" @disableNegativeTest/>
+    <input style="margin-bottom:14px" class="btn  @infectionReportClass" type="button" value="Reportar Contagio" onclick="location.href='@Url.Action("InfectionReport", "Reports")'" @disableInfected />
+    <input style="margin-bottom:14px" class="btn  @dischargeClass" type="button" value="Reportar Alta" onclick="location.href='@Url.Action("Discharge", "Reports")'" @disableDischarge />
+    <input style="margin-bottom:14px" class="btn  @negativeTestClass" type="button" value="Reportar Test Negativo" onclick="location.href='@Url.Action("NegativeTest", "Reports")'" @disableNegativeTest />
 
 </div>
