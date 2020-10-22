@@ -81,10 +81,13 @@ namespace TP1_ARQWEB.Controllers
 
         private bool intersectAtLeast15Minutes(Stay stay1, Stay stay2)
         {
-            if (stay1.TimeOfExit == null || stay2.TimeOfExit == null) return false; // esto capaz es medio polemico, caso borde
-            if (stay1.TimeOfExit < stay1.TimeOfEntrance.AddMinutes(15) || stay2.TimeOfExit < stay2.TimeOfEntrance.AddMinutes(15)) return false;
-            if (stay1.TimeOfEntrance <= stay2.TimeOfEntrance && stay2.TimeOfEntrance.AddMinutes(15) <= stay1.TimeOfExit) return true;
-            if (stay2.TimeOfEntrance <= stay1.TimeOfEntrance && stay1.TimeOfEntrance.AddMinutes(15) <= stay2.TimeOfExit) return true;
+
+            DateTime TimeOfExit1 = stay1.TimeOfExit ?? DateTime.Now;
+            DateTime TimeOfExit2 = stay2.TimeOfExit ?? DateTime.Now;
+
+            if (TimeOfExit1 < stay1.TimeOfEntrance.AddMinutes(15) || TimeOfExit2 < stay2.TimeOfEntrance.AddMinutes(15)) return false;
+            if (stay1.TimeOfEntrance <= stay2.TimeOfEntrance && stay2.TimeOfEntrance.AddMinutes(15) <= TimeOfExit1) return true;
+            if (stay2.TimeOfEntrance <= stay1.TimeOfEntrance && stay1.TimeOfEntrance.AddMinutes(15) <= TimeOfExit2) return true;
             return false;
         }
 
