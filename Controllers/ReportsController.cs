@@ -137,6 +137,17 @@ namespace TP1_ARQWEB.Controllers
                                 await _emailSender.SendEmailAsync(userAtRisk.Email,
                                     "ADVERTENCIA: Riesgo de Contagio",
                                     "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus. Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
+
+
+                                Notification newNotification = new Notification
+                                {
+                                    NotificationType = Notification.Type.AtRisk,
+                                    UserId = userAtRisk.Id,
+                                    Date = DateTime.Now
+                                };
+                                _context.Add(newNotification);
+                                await _context.SaveChangesAsync();
+
                             }
                         }
                     }

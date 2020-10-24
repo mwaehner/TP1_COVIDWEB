@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TP1_ARQWEB.Areas.Identity.Data;
+using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
 
 namespace TP1_ARQWEB.Controllers
@@ -18,19 +19,42 @@ namespace TP1_ARQWEB.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly DBContext _context;
 
 
-        public HomeController(UserManager<ApplicationUser> userManager, ILogger<HomeController> logger)
+        public HomeController(UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, DBContext context)
         {
             _userManager = userManager;
             _logger = logger;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            bool isAtRisk = user.AtRisk;
-            return View(isAtRisk);
+
+            var notificationsForUser = from notification in _context.Notification
+                                       where notification.UserId == user.Id
+                                       orderby notification.Date descending
+                                       select notification;
+
+            return View(notificationsForUser);
+        }
+
+        // POST: ClearNotification/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> ClearNotification(int? Id)
+        {
+            Notification notification = await _context.Notification.FindAsync(Id);
+            if (notification != null)
+            {
+                _context.Notification.Remove(notification);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()
