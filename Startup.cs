@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TP1_ARQWEB.Data;
+using TP1_ARQWEB.Mail;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace TP1_ARQWEB
 {
@@ -27,8 +30,9 @@ namespace TP1_ARQWEB
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddSingleton<IEmailSender, EmailSender>();
 
-            
+
             services.AddDbContext<DBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DBContextConnection")));
         }

@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using TP1_ARQWEB.Areas.Identity.Data;
 using System.Security.Claims;
 using TP1_ARQWEB.Helpers;
+using System.Net.Mail;
+using TP1_ARQWEB.Mail;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -19,11 +22,13 @@ namespace TP1_ARQWEB.Controllers
     {
         private readonly DBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public ReportsController(DBContext context, UserManager<ApplicationUser> userManager)
+        public ReportsController(DBContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
 
@@ -103,6 +108,9 @@ namespace TP1_ARQWEB.Controllers
 
 
             var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser.Infected)
+                return RedirectToAction(nameof(Index));
+
             infectionReport.ApplicationUserId = currentUser.Id;
             _context.Add(infectionReport);
             await _context.SaveChangesAsync();
@@ -122,13 +130,20 @@ namespace TP1_ARQWEB.Controllers
                         if(stay2.UserId != stay.UserId && stay2.LocationId == stay.LocationId && intersectAtLeast15Minutes(stay, stay2))
                         {
                             var userAtRisk = await _userManager.FindByIdAsync(stay2.UserId);
-                            userAtRisk.AtRisk = true;
-                            await _userManager.UpdateAsync(currentUser);
+                            if (!userAtRisk.AtRisk)
+                            {
+                                userAtRisk.AtRisk = true;
+                                await _userManager.UpdateAsync(userAtRisk);
+                                await _emailSender.SendEmailAsync(userAtRisk.Email,
+                                    "ADVERTENCIA: Riesgo de Contagio",
+                                    "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus. Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
+                            }
                         }
                     }
                 }
             }
 
+            
 
             return RedirectToAction(nameof(Index));
         }
