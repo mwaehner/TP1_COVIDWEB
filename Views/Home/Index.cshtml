@@ -1,20 +1,18 @@
-﻿@model bool
+﻿@model IQueryable<Notification>
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-
-
 <div class="text-center">
-    @if ((bool)Model)
+    
+    @foreach (Notification notification in Model)
     {
-        <h1 class="display-4">Estas en riesgo, estuviste en contacto recientemente con alguien que dio positivo de coronavirus. </h1>
+    <form asp-action="ClearNotification" asp-route-id="@notification.Id">
+        <span class="btn btn-danger">
+            @notification.GetNotificationString() <input type="submit" value="OK" class="btn btn-warning" />
+        </span>
+    </form>
     }
-    else
-    {
-        <h1 class="display-4">Bienvenido a nuestro sitio. </h1>
-    }
-
 
 </div>
