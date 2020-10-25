@@ -29,6 +29,7 @@ namespace TP1_ARQWEB.Controllers
             _context = context;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);

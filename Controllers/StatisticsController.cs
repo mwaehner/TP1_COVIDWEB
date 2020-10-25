@@ -28,7 +28,7 @@ namespace TP1_ARQWEB.Controllers
         }
 
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
 
@@ -47,7 +47,7 @@ namespace TP1_ARQWEB.Controllers
             return View(statisticsModel);
 
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public JsonResult UsersComposition()
         {
 
@@ -72,10 +72,10 @@ namespace TP1_ARQWEB.Controllers
             });
 
         }
-        
 
 
-        [Authorize]
+
+        [Authorize(Roles = "Admin")]
         public JsonResult CheckinsTimeSeries()
         {
 
