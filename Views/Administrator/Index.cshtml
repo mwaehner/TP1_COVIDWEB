@@ -1,0 +1,61 @@
+﻿
+
+
+@model AdministratorViewModel
+@{
+    ViewData["Title"] = "Administrador";
+}
+@*<h2>@ViewData["Title"]</h2>*@
+<h3>Administradores</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Email</td>
+        </tr>
+    </thead>
+    @foreach (var user in Model.Administrators)
+    {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.Email</td>
+        </tr>
+    }
+</table>
+<h3>Usuarios</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Email</td>
+        </tr>
+    </thead>
+    @foreach (var user in Model.Everyone)
+    {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.Email</td>
+        </tr>
+    }
+</table>
+
+<h3>Locaciones</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Latitud</td>
+            <td>Longitud</td>
+            <td>Nombre Lugar</td>
+            <td>Id Dueño</td>
+        </tr>
+    </thead>
+    @foreach (var loc in Model.Locations)
+    {
+        <tr>
+            <td>@loc.Latitud</td>
+            <td>@loc.Longitud</td>
+            <td>@loc.Nombre</td>
+            <td>@loc.IdPropietario</td>
+        </tr>
+    }
+</table>

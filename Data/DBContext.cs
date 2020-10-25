@@ -17,7 +17,7 @@ namespace TP1_ARQWEB.Data
             : base(options)
         {
         }
-
+        
         public DbSet<InfectionReport> InfectionReport { get; set; }
         public DbSet<NegativeTest> NegativeTest { get; set; }
 
