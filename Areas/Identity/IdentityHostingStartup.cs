@@ -33,7 +33,7 @@ namespace TP1_ARQWEB.Areas.Identity
                     options.Password.RequiredLength = 3;
 
 
-    }).AddEntityFrameworkStores<DBContext>();
+    }).AddRoles<IdentityRole>().AddEntityFrameworkStores<DBContext>();
             });
         }
     }

@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using TP1_ARQWEB.Data;
+using TP1_ARQWEB.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace TP1_ARQWEB
 {
@@ -16,7 +18,24 @@ namespace TP1_ARQWEB
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                try
+                {
+                    var context = services.GetRequiredService<DBContext>();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    ContextSeed.SeedRolesAsync(userManager, roleManager).Wait();
+                    ContextSeed.SeedSuperAdminAsync(userManager, roleManager).Wait();
+                }
+                catch (Exception ex)
+                {
+                    var logger = loggerFactory.CreateLogger<Program>();
+                    logger.LogError(ex, "An error occurred seeding the DB.");
+                }
+            }
 
             host.Run();
         }
