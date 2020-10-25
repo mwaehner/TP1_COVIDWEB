@@ -1,0 +1,151 @@
+﻿@model TP1_ARQWEB.Models.ViewModels.StatisticsViewModel
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h1>Dasboard de estadisticas</h1>
+<p>
+    Enterate de todo lo que esta sucediendo en tu sitio web.
+</p>
+
+<div>
+    <dl class="row">
+
+        <div class="col-2">
+            @Html.DisplayFor(m => m.users)
+            @Html.DisplayFor(m => m.infectionReports)
+            @Html.DisplayFor(m => m.negativeTests)
+
+        </div>
+
+        <div class="col-2">
+            @Html.DisplayFor(m => m.locations)
+            @Html.DisplayFor(m => m.checkins)
+        </div>
+
+
+        <div class="col">
+            <div class="card tabbable">
+
+                <ul class="nav nav-tabsn ">
+                    <li class="active"><a class="atab" href="#a_tab" data-toggle="tab" style="margin-right: 20px">Usuarios</a></li>
+                    <li><a class="btab" href="#b_tab" data-toggle="tab">Checkins</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="a_tab">
+                        <h1>Usuarios</h1>
+
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="tab-pane" id="b_tab">
+                        <h1>Checkins</h1>
+                        <canvas id="checkinsTimeSeries"></canvas>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $.get('Statistics/UsersComposition').done(function (data) {
+
+
+            var pieData = [data.healthy, data.infected, data.atRisk]
+
+            var ctx = document.getElementById('pieChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Sanos', 'Infectados', 'Contactos Estrechos'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: pieData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+        })
+
+    </script>
+    <script src="~/lib/moment/moment.min.js"></script>
+
+    <script>
+        $.get('Statistics/CheckinsTimeSeries').done(function (data) {
+
+            var ctx = document.getElementById('checkinsTimeSeries').getContext('2d');
+            labels = data.map(function (value) { return value.x.slice(5, 10) });
+            ydata = data.map(function (value) { return value.y });
+
+            debugger;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '# de Checkins',
+                        data: ydata,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            })
+        
+
+
+        })
+    </script>
+</div>

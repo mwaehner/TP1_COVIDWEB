@@ -8,6 +8,14 @@ using Microsoft.AspNetCore.Identity;
 namespace TP1_ARQWEB.Areas.Identity.Data
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
+
+    public enum InfectionStatus
+    {
+        Healthy = 0,
+        Infected,
+        AtRisk,
+    }
+
     public class ApplicationUser : IdentityUser
     {
         [PersonalData]
@@ -21,7 +29,15 @@ namespace TP1_ARQWEB.Areas.Identity.Data
         public int? CurrentLocationId { get; set; }
         public int? CurrentStayId { get; set; }
 
-        public bool Infected { get; set; }
-        public bool AtRisk { get; set; }
+        public InfectionStatus InfectionStatus { get; set; }
+
+        public bool Infected { get {
+                return InfectionStatus == InfectionStatus.Infected;
+            }
+        }
+        public bool AtRisk { get {
+                return InfectionStatus == InfectionStatus.AtRisk;
+            }
+        }
     }
 }

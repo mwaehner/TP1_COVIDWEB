@@ -115,7 +115,7 @@ namespace TP1_ARQWEB.Controllers
             _context.Add(infectionReport);
             await _context.SaveChangesAsync();
 
-            currentUser.Infected = true;
+            currentUser.InfectionStatus = InfectionStatus.Infected;
             await _userManager.UpdateAsync(currentUser);
 
             var stays = await _context.Stay.ToListAsync();
@@ -132,7 +132,7 @@ namespace TP1_ARQWEB.Controllers
                             var userAtRisk = await _userManager.FindByIdAsync(stay2.UserId);
                             if (!userAtRisk.AtRisk)
                             {
-                                userAtRisk.AtRisk = true;
+                                userAtRisk.InfectionStatus = InfectionStatus.AtRisk;
                                 await _userManager.UpdateAsync(userAtRisk);
                                 await _emailSender.SendEmailAsync(userAtRisk.Email,
                                     "ADVERTENCIA: Riesgo de Contagio",
@@ -204,8 +204,7 @@ namespace TP1_ARQWEB.Controllers
 
 
             var currentUser = await _userManager.GetUserAsync(User);
-            currentUser.Infected = false;
-            currentUser.AtRisk = false;
+            currentUser.InfectionStatus = InfectionStatus.Healthy; // Agregar estado Recovered.
             await _userManager.UpdateAsync(currentUser);
 
             return RedirectToAction("Index", "Home");
@@ -239,7 +238,7 @@ namespace TP1_ARQWEB.Controllers
             _context.Add(negativeTest);
             await _context.SaveChangesAsync();
 
-            currentUser.AtRisk = false;
+            currentUser.InfectionStatus = InfectionStatus.Healthy;
             await _userManager.UpdateAsync(currentUser);
 
 
