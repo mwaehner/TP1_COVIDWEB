@@ -39,4 +39,7 @@ y seleccionar "consola de administrador de paquetes"
 7 - para que se pueda mostrar los códigos QR, se debe ir a Tools/NuGet Package Manager/Manage NuGet Packages for Solution
 y en Browse buscar el paquete QRCoder de Raffael Herrmann e instalarlo.
 
+8 - para acceder a pantalla administrador (credenciales hardcodeadas):
+	usermail: admin@gmail.com
+	password: adminadmin
 
