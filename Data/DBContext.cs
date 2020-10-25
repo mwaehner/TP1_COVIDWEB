@@ -17,13 +17,14 @@ namespace TP1_ARQWEB.Data
             : base(options)
         {
         }
-
+        
         public DbSet<InfectionReport> InfectionReport { get; set; }
         public DbSet<NegativeTest> NegativeTest { get; set; }
 
 
         public DbSet<Location> Location { get; set; }
         public DbSet<Stay> Stay { get; set; }
+        public DbSet<Notification> Notification { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
