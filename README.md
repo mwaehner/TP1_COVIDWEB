@@ -43,3 +43,4 @@ y en Browse buscar el paquete QRCoder de Raffael Herrmann e instalarlo.
 	usermail: admin@gmail.com
 	password: adminadmin
 
+9 - una vez logueado como admin buscar botón adiministrador al lado de los demás
