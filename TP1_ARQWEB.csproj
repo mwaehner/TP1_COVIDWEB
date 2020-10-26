@@ -6,18 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20201017203627_Initial-Create4.cs" />
-    <Compile Remove="Migrations\20201017203627_Initial-Create4.Designer.cs" />
-    <Compile Remove="Migrations\20201019183913_Initial-Create2.cs" />
-    <Compile Remove="Migrations\20201019183913_Initial-Create2.Designer.cs" />
-    <Compile Remove="Migrations\20201019200942_Initial-Create2.cs" />
-    <Compile Remove="Migrations\20201019200942_Initial-Create2.Designer.cs" />
-    <Compile Remove="Migrations\20201024192459_initial-create2.cs" />
-    <Compile Remove="Migrations\20201024192459_initial-create2.Designer.cs" />
-    <Compile Remove="Migrations\20201024192534_initial-create2.cs" />
-    <Compile Remove="Migrations\20201024192534_initial-create2.Designer.cs" />
-    <Compile Remove="Migrations\20201024192707_initial-create2.cs" />
-    <Compile Remove="Migrations\20201024192707_initial-create2.Designer.cs" />
+    <Compile Remove="Migrations\20201025024252_Initial-Create.cs" />
+    <Compile Remove="Migrations\20201025024252_Initial-Create.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +22,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="QRCoder" Version="1.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -18,6 +18,13 @@ namespace TP1_ARQWEB
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
+
+            seedAdmin(host);
+            host.Run();
+        }
+
+        private static void seedAdmin(IHost host)
+        {
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -36,10 +43,7 @@ namespace TP1_ARQWEB
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
-
-            host.Run();
         }
-
         private static void CreateDbIfNotExists(IHost host)
         {
             using (var scope = host.Services.CreateScope())
