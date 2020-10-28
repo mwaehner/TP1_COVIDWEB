@@ -12,15 +12,12 @@ namespace TP1_ARQWEB.Models
         public string IdPropietario { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Capacidad { get; set; }
+        public int Capacidad { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Latitud { get; set; }
+        public double Latitud { get; set; }
         [Required]
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Longitud { get; set; }
+        public double Longitud { get; set; }
         public int CantidadPersonasDentro { get; set; }
         public byte[] Image { get; set; }
 
