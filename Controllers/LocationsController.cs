@@ -184,7 +184,22 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            return View(location);
+            ImageViewModel model = new ImageViewModel
+            {
+                CurrentLocation = location
+            };
+
+            return View(model);
+        }
+
+        private bool ValidImageFormat (string imageName)
+        {
+            return imageName.EndsWith(".png") || imageName.EndsWith(".jpg");
+        }
+
+        private bool ValidImageSize (long imageSize)
+        {
+            return imageSize <= 1000000;
         }
 
         [HttpPost]
@@ -197,11 +212,33 @@ namespace TP1_ARQWEB.Controllers
             if (file != null && file.Length > 0)
             {
                 var location = await _context.Location.FindAsync(id);
+
+                ImageViewModel model = new ImageViewModel
+                {
+                    CurrentLocation = location,
+                    ImageName = file.FileName,
+                    ImageSize = file.Length
+                };
+
+                if (!ValidImageFormat(model.ImageName))
+                {
+                    ModelState.AddModelError("ImageName", "La imágen debe ser de formato PNG o JPG.");
+                }
+                if (!ValidImageSize(model.ImageSize))
+                {
+                    ModelState.AddModelError("ImageName", "La imágen es demasiado grande.");
+                }
+                if (!ModelState.IsValid) return View(model);
+
+
                 location.Image = new byte[file.Length];
 
                 file.OpenReadStream().Read(location.Image, 0, (int)file.Length);
                 _context.Update(location);
                 await _context.SaveChangesAsync();
+
+                
+
             }
 
             return RedirectToAction(nameof(Image));

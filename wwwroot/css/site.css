@@ -99,9 +99,11 @@ div.login-form-icon {
     text-align: center;
 }
 
-
-
-
+/*location images*/
+.location-image {
+    max-width: 100%;
+    height: auto;
+}
 
 
 
