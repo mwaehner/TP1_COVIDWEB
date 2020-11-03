@@ -16,8 +16,11 @@
             <div class="container">
                @* <div ><img   src="https://vectr.com/rikipanchi/welcome.svg?width=50&height=33.32&select=oSQ0j6b6mpage0"></div>*@
                 <a class="navbar-brand " asp-area="" asp-controller="Home" asp-action="Index">CovidWeb</a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <div  id="navbarCollapse" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial.cshtml" />
                     <partial name="_AdminActionsPartial" />
                 </div>
