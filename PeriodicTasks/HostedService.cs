@@ -17,8 +17,7 @@ internal interface IScopedProcessingService
 
 internal class ScopedProcessingService : IScopedProcessingService
 {
-    //private readonly DBContext _context;
-    //private readonly UserManager<ApplicationUser> _userManager;
+    
     private readonly StatusManager _statusManager;
 
     public ScopedProcessingService(UserManager<ApplicationUser> userManager, DBContext context)

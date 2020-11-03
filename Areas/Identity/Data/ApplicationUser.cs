@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TP1_ARQWEB.Areas.Identity.Data
 {
@@ -39,5 +41,10 @@ namespace TP1_ARQWEB.Areas.Identity.Data
                 return InfectionStatus == InfectionStatus.AtRisk;
             }
         }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Tiempo salida")]
+        public DateTime? TimeOfLastCondition { get; set; }
     }
 }

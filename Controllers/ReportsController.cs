@@ -99,6 +99,12 @@ namespace TP1_ARQWEB.Controllers
             return false;
         }
 
+        private DateTime minDate(DateTime date1, DateTime date2)
+        {
+            if (date1 < date2) return date1;
+            return date2;
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -116,6 +122,7 @@ namespace TP1_ARQWEB.Controllers
             await _context.SaveChangesAsync();
 
             currentUser.InfectionStatus = InfectionStatus.Infected;
+            currentUser.TimeOfLastCondition = infectionReport.DiagnosisDate;
             await _userManager.UpdateAsync(currentUser);
 
             var stays = await _context.Stay.ToListAsync();
@@ -130,20 +137,22 @@ namespace TP1_ARQWEB.Controllers
                         if(stay2.UserId != stay.UserId && stay2.LocationId == stay.LocationId && intersectAtLeast15Minutes(stay, stay2))
                         {
                             var userAtRisk = await _userManager.FindByIdAsync(stay2.UserId);
-                            if (!userAtRisk.AtRisk)
+                            DateTime newTimeOfCondition = minDate((stay.TimeOfExit ?? DateTime.Now), (stay2.TimeOfExit ?? DateTime.Now));
+                            if (!userAtRisk.Infected && (userAtRisk.TimeOfLastCondition == null || userAtRisk.TimeOfLastCondition < newTimeOfCondition) )
                             {
                                 userAtRisk.InfectionStatus = InfectionStatus.AtRisk;
+                                userAtRisk.TimeOfLastCondition = newTimeOfCondition;
                                 await _userManager.UpdateAsync(userAtRisk);
                                 await _emailSender.SendEmailAsync(userAtRisk.Email,
                                     "ADVERTENCIA: Riesgo de Contagio",
-                                    "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus. Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
+                                    "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus alrededor de la fecha" + newTimeOfCondition.ToString() + ". Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
 
 
                                 Notification newNotification = new Notification
                                 {
                                     NotificationType = Notification.Type.AtRisk,
                                     UserId = userAtRisk.Id,
-                                    Date = DateTime.Now
+                                    Date = newTimeOfCondition
                                 };
                                 _context.Add(newNotification);
                                 await _context.SaveChangesAsync();
@@ -216,6 +225,7 @@ namespace TP1_ARQWEB.Controllers
 
             var currentUser = await _userManager.GetUserAsync(User);
             currentUser.InfectionStatus = InfectionStatus.Healthy; // Agregar estado Recovered.
+            currentUser.TimeOfLastCondition = null;
             await _userManager.UpdateAsync(currentUser);
 
             return RedirectToAction("Index", "Home");
@@ -250,6 +260,7 @@ namespace TP1_ARQWEB.Controllers
             await _context.SaveChangesAsync();
 
             currentUser.InfectionStatus = InfectionStatus.Healthy;
+            currentUser.TimeOfLastCondition = null;
             await _userManager.UpdateAsync(currentUser);
 
 
