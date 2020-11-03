@@ -1,0 +1,32 @@
+﻿
+@model AdministratorViewModel
+@{
+    ViewData["Title"] = "Administrador";
+}
+
+
+<h3>Usuarios Propietarios</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <td>Nombre</td>
+            <td>Correo</td>
+            <td>Lugar</td>
+            <td>Latitud</td>
+            <td>Longitud</td>
+        </tr>
+    </thead>
+    @foreach (var prop in Model.Propietarios)
+    {
+<tr>
+    <td>@prop.usuario.FirstName</td>
+    <td>@prop.usuario.Email</td>
+    <td>@prop.locaciones.Nombre</td>
+    <td>@prop.locaciones.Latitud</td>
+    <td>@prop.locaciones.Longitud</td>
+
+</tr>
+    }
+</table>
+
+ 

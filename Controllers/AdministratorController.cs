@@ -10,6 +10,7 @@ using TP1_ARQWEB.Models;
 using Microsoft.EntityFrameworkCore;
 using TP1_ARQWEB.Areas.Identity.Data;
 using TP1_ARQWEB.Data;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -19,31 +20,36 @@ namespace TP1_ARQWEB.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         
         private readonly DBContext _context;
+
+        private UsuariosYLocs _repoUsers;
+
         public AdministratorController(
            UserManager<ApplicationUser> userManager, DBContext context)
         {
             _userManager = userManager;
             _context = context;
+            _repoUsers = new UsuariosYLocs();
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        { 
+             
+            return View();
+        }
+        public IActionResult DataUsers()
         {
-            var admins = (await _userManager
-                .GetUsersInRoleAsync("Admin"))
-                .ToArray();
-            var everyone = await _userManager.Users
-                .ToArrayAsync();
-            var locations = _context.Location.ToArray();
+
 
             var model = new AdministratorViewModel
             {
-                Administrators = admins,
-                Everyone = everyone,
-                Locations = locations
+                Propietarios = _repoUsers.usuariosPropietarios(_context),
+                /*Everyone = _repoUsers.noPropietarios(_context),*/
+                
             };
             return View(model);
-        }
 
+            
+        }
         /*
                 // GET: AdministratorController
                 public ActionResult Index()
