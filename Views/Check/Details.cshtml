@@ -9,7 +9,7 @@
     <hr />
     @if (Model.location.Image != null)
     {
-        <img src='@Url.Action("ShowLocationImage", "Image", new { id = Model.location.Id })' />
+        <img class="location-image" src='@Url.Action("ShowLocationImage", "Image", new { id = Model.location.Id })' width="700" height="500" />
     }
     <dl class="row">
         <dt class="col-sm-2">
