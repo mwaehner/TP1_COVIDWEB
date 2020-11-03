@@ -35,6 +35,11 @@ namespace TP1_ARQWEB
 
             services.AddDbContext<DBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DBContextConnection")));
+
+
+            services.AddHostedService<ConsumeScopedServiceHostedService>();
+            services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
