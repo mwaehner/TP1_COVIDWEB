@@ -9,12 +9,16 @@ namespace TP1_ARQWEB.Models
     public class AdministratorViewModel
     {
 
+        public class UsuariosConLocaciones{
+            public Location locaciones { get; set; }
+            public ApplicationUser usuario { get; set; }
+        }
 
+        public List<UsuariosConLocaciones> Propietarios{ get; set; }
+        
+        public List<ApplicationUser> Everyone { get; set; }
 
-        public ApplicationUser[] Administrators { get; set; }
-        public ApplicationUser[] Everyone { get; set; }
-
-        public Location[] Locations { get; set; }
+        public List<Location> Locations { get; set; }
 
     }
 }
