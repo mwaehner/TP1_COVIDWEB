@@ -292,5 +292,20 @@ namespace TP1_ARQWEB.Controllers
         {
             return _context.Location.Any(e => e.Id == id);
         }
+
+        // POST: Locations/DeleteImage/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteImage(int id)
+        {
+            var location = await _context.Location.FindAsync(id);
+            location.Image = null;
+            _context.Update(location);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Image), new {id = id });
+        }
     }
 }
+
