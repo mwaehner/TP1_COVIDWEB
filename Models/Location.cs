@@ -48,15 +48,14 @@ namespace TP1_ARQWEB.Models
 
             if (AbreATodaHora()) return true;
 
-            if (AbreAMedianoche())
-                return horaActual < CierreHora || horaActual > AperturaHora
-                    || horaActual == CierreHora && minutoActual < CierreMinuto
-                    || horaActual == AperturaHora && minutoActual >= AperturaMinuto;
-
-
-            return horaActual < CierreHora && horaActual > AperturaHora
-                || horaActual == AperturaHora && minutoActual > AperturaMinuto
+            bool despuesDeApertura = horaActual > AperturaHora
+                || horaActual == AperturaHora && minutoActual >= AperturaMinuto;
+            bool antesDeCierre = horaActual < CierreHora
                 || horaActual == CierreHora && minutoActual < CierreMinuto;
+
+            if (AbreAMedianoche()) return despuesDeApertura || antesDeCierre;
+            else return despuesDeApertura && antesDeCierre;
+
         }
 
         [Timestamp]
