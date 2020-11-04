@@ -33,12 +33,18 @@ namespace TP1_ARQWEB.Areas.Identity.Data
 
         public InfectionStatus InfectionStatus { get; set; }
 
+        private bool FewerThan15DaysSinceCondition()
+        {
+            return TimeOfLastCondition?.AddDays(15) > DateTime.Now;
+        }
+
         public bool Infected { get {
-                return InfectionStatus == InfectionStatus.Infected;
+
+                return InfectionStatus == InfectionStatus.Infected && FewerThan15DaysSinceCondition();
             }
         }
         public bool AtRisk { get {
-                return InfectionStatus == InfectionStatus.AtRisk;
+                return InfectionStatus == InfectionStatus.AtRisk && FewerThan15DaysSinceCondition();
             }
         }
 
