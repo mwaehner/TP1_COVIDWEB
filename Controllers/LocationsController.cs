@@ -113,16 +113,22 @@ namespace TP1_ARQWEB.Controllers
             }
 
 
-            
-
             var location = await _context.Location.FindAsync(id);
             string userIdValue = _userManager.GetUserId(User);
             if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
             {
                 return NotFound();
             }
+
+            var model = new EditViewModel
+            {
+                Nombre = location.Nombre,
+                Capacidad = location.Capacidad,
+                Longitud = location.Longitud,
+                Latitud = location.Latitud
+            };
             
-            return View(location);
+            return View(model);
         }
 
         // POST: Locations/Edit/5
@@ -131,15 +137,11 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,IdPropietario,Capacidad,Latitud,Longitud")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Capacidad,Latitud,Longitud")] EditViewModel model)
         {
-            if (id != location.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
+                var location = await _context.Location.FindAsync(id);
                 try
                 {
 
@@ -147,6 +149,13 @@ namespace TP1_ARQWEB.Controllers
                     if (!String.IsNullOrWhiteSpace(userIdValue))
                     {
                         //location.IdPropietario = userIdValue;
+                        
+
+                        location.Nombre = model.Nombre;
+                        location.Latitud = model.Latitud;
+                        location.Longitud = model.Longitud;
+                        location.Capacidad = model.Capacidad;
+
                         _context.Update(location);
                         await _context.SaveChangesAsync();
                     }
@@ -165,7 +174,7 @@ namespace TP1_ARQWEB.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(location);
+            return View(model);
         }
 
         // GET: Locations/Image/5
