@@ -87,6 +87,14 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Nombre,IdPropietario,Capacidad,Latitud,Longitud")] Location location)
         {
+            if (location.Latitud <= -90.0 || location.Latitud >= 90.0)
+            {
+                ModelState.AddModelError("Latitud", "La latitud debe estar entre -90 y -90");
+            }
+            if (location.Longitud >= 180.0 || location.Longitud <= -180.0)
+            {
+                ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y -180");
+            }
             if (ModelState.IsValid)
             {
                 var claimsIdentity = User.Identity as ClaimsIdentity;
@@ -139,6 +147,14 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Nombre,Capacidad,Latitud,Longitud")] EditViewModel model)
         {
+            if (model.Latitud <= -90.0 || model.Latitud >= 90.0)
+            {
+                ModelState.AddModelError("Latitud", "La latitud debe estar entre -90 y -90");
+            }
+            if (model.Longitud >= 180.0 || model.Longitud <= -180.0)
+            {
+                ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y -180");
+            }
             if (ModelState.IsValid)
             {
                 var location = await _context.Location.FindAsync(id);
