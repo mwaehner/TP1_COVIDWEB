@@ -92,12 +92,19 @@ namespace TP1_ARQWEB.Controllers
 
             if (currentUser.CurrentLocationId != null)
             {
+                try
+                {
+
+                
+                var location = await _context.Location.FindAsync(currentUser.CurrentLocationId);
+                location.CantidadPersonasDentro--;
+
+                _context.Update(location);
+
+
                 Stay currentStay = await _context.Stay
                 .FirstOrDefaultAsync(m => m.Id == currentUser.CurrentStayId);
 
-                var location = await _context.Location.FindAsync(currentUser.CurrentLocationId);
-                location.CantidadPersonasDentro--;
-                _context.Update(location);
 
                 currentUser.CurrentLocationId = null;
                 currentUser.CurrentStayId = null;
@@ -107,6 +114,9 @@ namespace TP1_ARQWEB.Controllers
                 _context.Update(currentStay);
 
                 await _context.SaveChangesAsync();
+
+                }
+                catch (DbUpdateConcurrencyException) { }
 
             }
 
@@ -131,24 +141,33 @@ namespace TP1_ARQWEB.Controllers
                 if (currentUser.CurrentLocationId == null)
                 {
 
-                    Stay newStay = new Stay
+                    try
                     {
-                        UserId = currentUser.Id,
-                        LocationId = (int)Id,
-                        TimeOfEntrance = DateTime.Now,
-                        TimeOfExit = null
-                    };
-                    _context.Add(newStay);
-                    await _context.SaveChangesAsync();
 
-                    currentUser.CurrentLocationId = Id;
-                    currentUser.CurrentStayId = newStay.Id;
-                    await _userManager.UpdateAsync(currentUser);
+
+
+                        location.CantidadPersonasDentro++;
+
+                        _context.Update(location);
+                        await _context.SaveChangesAsync();
+
+                        Stay newStay = new Stay
+                        {
+                            UserId = currentUser.Id,
+                            LocationId = (int)Id,
+                            TimeOfEntrance = DateTime.Now,
+                            TimeOfExit = null
+                        };
+                        _context.Add(newStay);
+                        await _context.SaveChangesAsync();
+
+                        currentUser.CurrentLocationId = Id;
+                        currentUser.CurrentStayId = newStay.Id;
+                        await _userManager.UpdateAsync(currentUser);
+                    } catch (DbUpdateConcurrencyException) { }
 
                     
-                    location.CantidadPersonasDentro++;
-                    _context.Update(location);
-                    await _context.SaveChangesAsync();
+      
 
                 }
                 else if (currentUser.CurrentLocationId != Id)

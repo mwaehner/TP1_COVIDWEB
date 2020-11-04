@@ -21,5 +21,8 @@ namespace TP1_ARQWEB.Models
         public int CantidadPersonasDentro { get; set; }
         public byte[] Image { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
     }
 }
