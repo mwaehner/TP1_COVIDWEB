@@ -89,11 +89,11 @@ namespace TP1_ARQWEB.Controllers
         {
             if (location.Latitud <= -90.0 || location.Latitud >= 90.0)
             {
-                ModelState.AddModelError("Latitud", "La latitud debe estar entre -90 y -90");
+                ModelState.AddModelError("Latitud", "La latitud debe estar entre -90 y 90");
             }
             if (location.Longitud >= 180.0 || location.Longitud <= -180.0)
             {
-                ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y -180");
+                ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y 180");
             }
             if (ModelState.IsValid)
             {
