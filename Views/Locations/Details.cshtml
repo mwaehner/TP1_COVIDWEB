@@ -4,6 +4,11 @@
     ViewData["Title"] = "Detalles";
 }
 
+@{ 
+    var HorarioApertura = new DateTime(1, 1, 1, Model.AperturaHora, Model.AperturaMinuto, 0);
+    var HorarioCierre = new DateTime(1, 1, 1, Model.CierreHora, Model.CierreMinuto, 0);
+}
+
 <h1>Detalles</h1>
 
 <div>
@@ -17,16 +22,22 @@
             @Html.DisplayFor(model => model.Nombre)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IdPropietario)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IdPropietario)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Capacidad)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Capacidad)
+        </dd>
+        <dt class="col-sm-2">
+            Horario de Apertura
+        </dt>
+        <dd class="col-sm-10">
+            @HorarioApertura.ToString("HH:mm")
+        </dd>
+        <dt class="col-sm-2">
+            Horario de Cierre
+        </dt>
+        <dd class="col-sm-10">
+            @HorarioCierre.ToString("HH:mm")
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Latitud)

@@ -135,7 +135,7 @@ namespace TP1_ARQWEB.Controllers
             var location = await _context.Location.FindAsync(Id);
 
 
-            if (!currentUser.Infected && location.CantidadPersonasDentro < location.Capacidad)
+            if (!currentUser.Infected && location.CantidadPersonasDentro < location.Capacidad && location.Abierto())
             {
 
                 if (currentUser.CurrentLocationId == null)
