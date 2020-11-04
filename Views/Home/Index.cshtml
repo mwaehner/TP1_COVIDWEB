@@ -4,21 +4,40 @@
     ViewData["Title"] = "Home Page";
 }
 
+<h1 class="m-2">Bienvenido a CovidWeb!</h1>
+
+<p class="m-2">En este sitio vas a poder registrar locaciones y contagios.</p>
+
+    <div class="col screen-sm-min">
+        <a id="reports" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Reports" asp-action="Index">Reportes</a>
+
+
+    </div>
+    <div class="col hidden-md-up">
+        <a id="locat" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Locations" asp-action="Index">Locaciones</a>
+
+    </div>
+
 @try
 {
-<div class="text-center">
-    
-    @foreach (Notification notification in Model)
-    {
-    <form asp-action="ClearNotification" asp-route-id="@notification.Id">
-        <span class="btn btn-danger">
-            @notification.GetNotificationString() <input type="submit" value="OK" class="btn btn-warning" />
-        </span>
-    </form>
-    }
 
-</div>
-} catch(Exception ex)
+
+
+    <div class="text-center">
+        @foreach (Notification notification in Model)
+        {
+            <form asp-action="ClearNotification" asp-route-id="@notification.Id">
+                <span class="btn btn-danger">
+                    @notification.GetNotificationString() <input type="submit" value="OK" class="btn btn-warning" />
+                </span>
+            </form>
+        }
+
+
+
+    </div>
+}
+catch (Exception ex)
 {
 
 }
