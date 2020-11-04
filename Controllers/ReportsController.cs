@@ -116,8 +116,15 @@ namespace TP1_ARQWEB.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser.Infected)
                 return RedirectToAction(nameof(Index));
-
             infectionReport.ApplicationUserId = currentUser.Id;
+            infectionReport.DischargedDate = null;
+
+            if (infectionReport.DiagnosisDate > DateTime.Now)
+            {
+                ModelState.AddModelError("DiagnosisDate", "La fecha de diagnosis no puede ser posterior a la fecha actual.");
+                return View(infectionReport);
+            }
+
             _context.Add(infectionReport);
             await _context.SaveChangesAsync();
 
@@ -214,6 +221,10 @@ namespace TP1_ARQWEB.Controllers
             {
                 ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico");
             }
+            if (infectionDischarge.DischargedDate > DateTime.Now)
+            {
+                ModelState.AddModelError("DischargedDate", "La fecha de dada de alta no puede ser posterior a la fecha actual.");
+            }
             if (!ModelState.IsValid) return View(infectionDischarge);
 
             infectionReport.DischargedDate = infectionDischarge.DischargedDate;
@@ -255,7 +266,22 @@ namespace TP1_ARQWEB.Controllers
 
 
             var currentUser = await _userManager.GetUserAsync(User);
+            if (!currentUser.AtRisk) 
+                return RedirectToAction(nameof(Index));
             negativeTest.ApplicationUserId = currentUser.Id;
+
+            if (negativeTest.TestDate > DateTime.Now)
+            {
+                ModelState.AddModelError("TestDate", "La fecha de realización del test no puede ser posterior a la fecha actual.");
+                return View(negativeTest);
+            }
+            if (negativeTest.TestDate < currentUser.TimeOfLastCondition)
+            {
+                ModelState.AddModelError("TestDate", "La fecha de realización del test debe ser posterior a la última vez que entró en contacto con alguien contagiado.");
+                return View(negativeTest);
+            }
+
+
             _context.Add(negativeTest);
             await _context.SaveChangesAsync();
 
