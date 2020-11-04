@@ -10,20 +10,28 @@
 
 @if (Model.CurrentLocation.Image != null)
 {
-    <img class="location-image" src='@Url.Action("ShowLocationImage", "Image", new { id = Model.CurrentLocation.Id })' width="500"  />
+    <img class="location-image" src='@Url.Action("ShowLocationImage", "Image", new { id = Model.CurrentLocation.Id })' width="500" />
 }
 
 @using (Html.BeginForm("Image", "Locations", FormMethod.Post,
-                       new { enctype = "multipart/form-data" }))
+                      new { enctype = "multipart/form-data" }))
 {
     <label for="file">Subir imágen:</label>
     <input type="file" name="file" id="file" style="width: 100%;" />
     @Html.HiddenFor(m => m.CurrentLocation)
 
-    <input type="submit" value="Upload" class="submit" /><br />
+    <input type="submit" value="Subir" class="submit" />
+    <br />
     <span asp-validation-for="ImageName" class="text-danger"></span>
     <span asp-validation-for="ImageSize" class="text-danger"></span>
 
+}
+
+@if (Model.CurrentLocation.Image != null)
+{
+    <form asp-action="DeleteImage" asp-route-id="@Model.CurrentLocation.Id">
+        <input type="submit" value="Borrar" class="submit" />
+    </form>
 }
 
 <div>
