@@ -1,4 +1,4 @@
-﻿@model TP1_ARQWEB.Models.Location
+﻿@model TP1_ARQWEB.Models.EditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,13 +12,11 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
                 <input asp-for="Nombre" class="form-control" />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
-            @Html.HiddenFor(m => m.IdPropietario)
             <div class="form-group">
                 <label asp-for="Capacidad" class="control-label"></label>
                 <input asp-for="Capacidad" class="form-control" />
