@@ -26,9 +26,21 @@
     <div class="text-center">
         @foreach (Notification notification in Model)
         {
+             
+                string notificationString = "";
+                switch (notification.NotificationType)
+                {
+                    case (Notification.Type.AtRisk):
+                        notificationString = "Entraste contacto con alguién contagiado de CoronaVirus alrededor del " + notification.Date.ToString("dd/MM") + " a las " + notification.Date.ToString("HH:mm tt");
+                        break;
+                    default:
+                        break;
+                }
+            
+
             <form asp-action="ClearNotification" asp-route-id="@notification.Id">
                 <span class="btn btn-danger">
-                    @notification.GetNotificationString() <input type="submit" value="OK" class="btn btn-warning" />
+                    @notificationString <input type="submit" value="OK" class="btn btn-warning" />
                 </span>
             </form>
         }
@@ -38,6 +50,6 @@
     </div>
 }
 catch (Exception ex)
-{
+                {
 
-}
+                }

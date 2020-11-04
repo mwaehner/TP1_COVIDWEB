@@ -14,20 +14,7 @@ namespace TP1_ARQWEB.Models
 
         public Notification() { }
 
-        public string GetNotificationString()
-        {
-            return GetNotificationStringFromType(this.NotificationType);
-        }
-        public static string GetNotificationStringFromType(Type type)
-        {
-            switch (type)
-            {
-                case Type.AtRisk:
-                    return "Estas en riesgo, estuviste en contacto recientemente con alguien que dio positivo de coronavirus.";
-                default:
-                    return "";
-            }
-        }
+        
         public int Id { get; set; }
 
         [Required]
