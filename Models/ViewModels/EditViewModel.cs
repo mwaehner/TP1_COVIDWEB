@@ -17,5 +17,14 @@ namespace TP1_ARQWEB.Models
         [Required]
         public double Longitud { get; set; }
 
+        [Required]
+        public int AperturaHora { get; set; }
+        [Required]
+        public int AperturaMinuto { get; set; }
+        [Required]
+        public int CierreHora { get; set; }
+        [Required]
+        public int CierreMinuto { get; set; }
+
     }
 }

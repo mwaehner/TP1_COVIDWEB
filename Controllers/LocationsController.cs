@@ -85,7 +85,7 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,IdPropietario,Capacidad,Latitud,Longitud")] Location location)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,IdPropietario,Capacidad,Latitud,Longitud,AperturaHora,AperturaMinuto,CierreHora,CierreMinuto")] Location location)
         {
             if (location.Latitud <= -90.0 || location.Latitud >= 90.0)
             {
@@ -95,6 +95,10 @@ namespace TP1_ARQWEB.Controllers
             {
                 ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y 180");
             }
+            if (location.AperturaHora > 23 || location.AperturaHora < 0 || location.AperturaMinuto > 59 || location.AperturaMinuto < 0)
+                ModelState.AddModelError("AperturaHora", "Hora de apertura inválida");
+            if (location.CierreHora > 23 || location.CierreHora < 0 || location.CierreMinuto > 59 || location.CierreMinuto < 0)
+                ModelState.AddModelError("CierreHora", "Hora de cierre inválida");
             if (ModelState.IsValid)
             {
                 var claimsIdentity = User.Identity as ClaimsIdentity;
@@ -133,7 +137,11 @@ namespace TP1_ARQWEB.Controllers
                 Nombre = location.Nombre,
                 Capacidad = location.Capacidad,
                 Longitud = location.Longitud,
-                Latitud = location.Latitud
+                Latitud = location.Latitud,
+                AperturaMinuto = location.AperturaMinuto,
+                AperturaHora = location.AperturaHora,
+                CierreMinuto = location.CierreMinuto,
+                CierreHora = location.CierreHora
             };
             
             return View(model);
@@ -145,7 +153,7 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Capacidad,Latitud,Longitud")] EditViewModel model)
+        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Capacidad,Latitud,Longitud,AperturaHora,AperturaMinuto,CierreHora,CierreMinuto")] EditViewModel model)
         {
             if (model.Latitud <= -90.0 || model.Latitud >= 90.0)
             {
@@ -155,6 +163,10 @@ namespace TP1_ARQWEB.Controllers
             {
                 ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y -180");
             }
+            if (model.AperturaHora > 23 || model.AperturaHora < 0 || model.AperturaMinuto > 59 || model.AperturaMinuto < 0)
+                ModelState.AddModelError("AperturaHora", "Hora de apertura inválida");
+            if (model.CierreHora > 23 || model.CierreHora < 0 || model.CierreMinuto > 59 || model.CierreMinuto < 0)
+                ModelState.AddModelError("CierreHora", "Hora de cierre inválida");
             if (ModelState.IsValid)
             {
                 var location = await _context.Location.FindAsync(id);
@@ -171,6 +183,10 @@ namespace TP1_ARQWEB.Controllers
                         location.Latitud = model.Latitud;
                         location.Longitud = model.Longitud;
                         location.Capacidad = model.Capacidad;
+                        location.AperturaHora = model.AperturaHora;
+                        location.AperturaMinuto = model.AperturaMinuto;
+                        location.CierreHora = model.CierreHora;
+                        location.CierreMinuto = model.CierreMinuto;
 
                         _context.Update(location);
                         await _context.SaveChangesAsync();
