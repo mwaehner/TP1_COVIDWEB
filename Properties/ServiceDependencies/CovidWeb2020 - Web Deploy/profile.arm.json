@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "TP1ARQWEB20201103185824",
+      "defaultValue": "CovidWeb2020",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }

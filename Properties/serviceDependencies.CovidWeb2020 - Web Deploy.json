@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/servidorderiki/databases/ArqWeb2020db(version2)",
+      "type": "mssql.azure",
+      "connectionId": "DBContextConnection",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

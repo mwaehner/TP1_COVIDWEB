@@ -19,6 +19,12 @@
     <Compile Remove="Migrations\20201104034938_initial-create.Designer.cs" />
     <Compile Remove="Migrations\20201104035116_initial-create.cs" />
     <Compile Remove="Migrations\20201104035116_initial-create.Designer.cs" />
+    <Compile Remove="Migrations\20201104035427_initial-create.cs" />
+    <Compile Remove="Migrations\20201104035427_initial-create.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="img\logo1.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +39,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="QRCoder" Version="1.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="img\logo1.svg" />
   </ItemGroup>
 
 </Project>
