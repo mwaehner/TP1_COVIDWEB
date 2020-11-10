@@ -26,7 +26,7 @@ namespace TP1_ARQWEB.Mail
                 EnableSsl = true
             };
 
-            //smtp.Send(mail);
+            smtp.Send(mail);
 
             return Task.CompletedTask;
         }
