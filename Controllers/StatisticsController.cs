@@ -47,22 +47,28 @@ namespace TP1_ARQWEB.Controllers
             return View(statisticsModel);
 
         }
+        public InfectionStatus calculateInfectionStatus (ApplicationUser user)
+        {
+            if (user.AtRisk) return InfectionStatus.AtRisk;
+            if (user.Infected) return InfectionStatus.Infected;
+            return InfectionStatus.Healthy;
+        }
+
         [Authorize(Roles = "Admin")]
         public JsonResult UsersComposition()
         {
 
-            var listOf = _userManager.Users
-                .GroupBy(user => user.InfectionStatus)
-                .Select(group => new
-                {
-                    Metric = group.Key,
-                    Count = group.Count()
-                });
+            var healthy = 0;
+            var infected = 0;
+            var atRisk = 0;
+            foreach (ApplicationUser User in _userManager.Users)
+            {
+                if (User.Infected) infected++;
+                else if (User.AtRisk) atRisk++;
+                else healthy++;
+            }
 
-            var healthy = listOf.FirstOrDefault(m => m.Metric == InfectionStatus.Healthy)?.Count ?? 0;
-            var infected = listOf.FirstOrDefault(m => m.Metric == InfectionStatus.Infected)?.Count ?? 0;
-            var atRisk = listOf.FirstOrDefault(m => m.Metric == InfectionStatus.AtRisk)?.Count ?? 0;
-
+            
 
             return Json(new
             {
