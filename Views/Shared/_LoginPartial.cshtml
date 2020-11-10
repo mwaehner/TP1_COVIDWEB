@@ -4,19 +4,19 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
-<ul class="navbar-nav">
+ 
+<ul class=" myclase navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a id="reports" class="nav-link text-dark" asp-area="" asp-controller="Reports" asp-action="Index">Reportes</a>
+            <a id="reports" class="nav-link text-dark " asp-area="" asp-controller="Reports" asp-action="Index">Reportes</a>
         </li>
         <li class="nav-item">
-            <a id="locat" class="nav-link text-dark" asp-area="" asp-controller="Locations" asp-action="Index">Locaciones</a>
+            <a id="locat" class="nav-link text-dark " asp-area="" asp-controller="Locations" asp-action="Index">Locaciones</a>
         </li>
 
         <li class="nav-item">
-            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hola @UserManager.GetUserName(User)!  </a>
+            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">  @UserManager.GetUserName(User)</a>
         </li>
         <li class="nav-item">
             <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

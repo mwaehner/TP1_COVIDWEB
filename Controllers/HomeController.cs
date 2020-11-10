@@ -33,7 +33,7 @@ namespace TP1_ARQWEB.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-
+            ViewBag.firstNameUser = user.FirstName;
             var notificationsForUser = from notification in _context.Notification
                                        where notification.UserId == user.Id
                                        orderby notification.Date descending

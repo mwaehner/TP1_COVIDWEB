@@ -9,28 +9,35 @@
     @*<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">*@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
+        @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        *@
+       <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-custom   border-bottom box-shadow mb-3">
+       
 
-                @* <div  ><img  src="~/img/logo1.svg"></div>*@
+        <div class="container">
 
-                <a class="navbar-brand " asp-area="" asp-controller="Home" asp-action="Index">CovidWeb</a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <a class="navbar-brand " asp-area="" asp-controller="Home" asp-action="Index">@*CovidWeb *@<img src="/images/logowhite.svg"></a>
 
-                <div id="navbarCollapse" class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial.cshtml" />
-                    <partial name="_AdminActionsPartial" />
-                </div>
+
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div id="navbarCollapse" class=" navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <partial name="_LoginPartial.cshtml" />
+                <partial name="_AdminActionsPartial" />
             </div>
+        </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            
             @RenderBody()
         </main>
     </div>

@@ -104,11 +104,32 @@ div.login-form-icon {
     max-width: 100%;
     height: auto;
 }
+/* navigation bar*/
+ .myclase .nav-item .nav-link {
+    font-family: 'Oswald',sans-serif ;
+    color: white !important;
+    text-transform: uppercase;
+    font-size: 1.2em;
+}
 
+.navbar-custom {
+    background-color: #353535;
 
+}
+ 
+/* h1 */
+.myheader{
+    font-family: 'Oswald',sans-serif;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    /* font-size: 2.5rem; */
+}
 
-
-
+/* p */
+.myparagr {
+    font-size: 1.2em;
+}
+ 
 
 
 
