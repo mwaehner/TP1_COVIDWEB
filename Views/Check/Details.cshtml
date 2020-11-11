@@ -16,26 +16,29 @@
     {
         <img class="location-image" src='@Url.Action("ShowLocationImage", "Image", new { id = Model.location.Id })' width="700" height="500" />
     }
-    <dl class="row">
-        <dt class="col-sm-2">
-            Horario de Apertura
-        </dt>
-        <dd class="col-sm-10">
-            @HorarioApertura.ToString("HH:mm")
-        </dd>
-        <dt class="col-sm-2">
-            Horario de Cierre
-        </dt>
-        <dd class="col-sm-10">
-            @HorarioCierre.ToString("HH:mm")
-        </dd>
-        <dt class="col-sm-2">
-            Cantidad de personas en esta Locación
-        </dt>
-        <dd class="col-sm-10">
-            @Model.location.CantidadPersonasDentro / @Model.location.Capacidad
-        </dd>
-    </dl>
+<dl class="row">
+    <dt class="col-sm-2">
+        Horario de Apertura
+    </dt>
+    <dd class="col-sm-10">
+        @HorarioApertura.ToString("HH:mm")
+    </dd>
+    <dt class="col-sm-2">
+        Horario de Cierre
+    </dt>
+    <dd class="col-sm-10">
+        @HorarioCierre.ToString("HH:mm")
+    </dd>
+    <dt class="col-sm-2">
+        Cantidad de personas en esta Locación
+    </dt>
+    <dd class="col-sm-10">
+        @Model.location.CantidadPersonasDentro / @Model.location.Capacidad
+    </dd>
+    <dd class="col-sm-10">
+        @DateTime.Now.ToString("HH:mm")
+    </dd>
+</dl>
 </div>
 
 @{
