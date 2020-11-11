@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using System.Text.Json;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -87,7 +88,7 @@ namespace TP1_ARQWEB.Controllers
 
 
             var listOf = _context.Stay
-                .Where(stay => DateTime.Now < stay.TimeOfEntrance.AddYears(1))
+                .Where(stay => Time.Now() < stay.TimeOfEntrance.AddYears(1))
                 .GroupBy(stay => stay.TimeOfEntrance.Date)
                 .Select(group => new
                 {

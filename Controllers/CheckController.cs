@@ -12,6 +12,7 @@ using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
 using Microsoft.AspNetCore.Identity;
 using TP1_ARQWEB.Areas.Identity.Data;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -110,7 +111,7 @@ namespace TP1_ARQWEB.Controllers
                 currentUser.CurrentStayId = null;
                 await _userManager.UpdateAsync(currentUser);
 
-                currentStay.TimeOfExit = DateTime.Now;
+                currentStay.TimeOfExit = Time.Now();
                 _context.Update(currentStay);
 
                 await _context.SaveChangesAsync();
@@ -155,7 +156,7 @@ namespace TP1_ARQWEB.Controllers
                         {
                             UserId = currentUser.Id,
                             LocationId = (int)Id,
-                            TimeOfEntrance = DateTime.Now,
+                            TimeOfEntrance = Time.Now(),
                             TimeOfExit = null
                         };
                         _context.Add(newStay);

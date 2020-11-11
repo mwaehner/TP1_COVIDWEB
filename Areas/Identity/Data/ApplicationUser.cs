@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Areas.Identity.Data
 {
@@ -35,7 +36,7 @@ namespace TP1_ARQWEB.Areas.Identity.Data
 
         private bool FewerThan15DaysSinceCondition()
         {
-            return TimeOfLastCondition?.AddDays(15) > DateTime.Now;
+            return TimeOfLastCondition?.AddDays(15) > Time.Now();
         }
 
         public bool Infected { get {

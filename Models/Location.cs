@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Models
 {
@@ -44,8 +45,8 @@ namespace TP1_ARQWEB.Models
         public bool Abierto()
         {
 
-            var horaActual = DateTime.UtcNow.AddHours(-3).Hour;
-            var minutoActual = DateTime.UtcNow.Minute;
+            var horaActual = Time.Now().Hour;
+            var minutoActual = Time.Now().Minute;
 
             if (AbreATodaHora()) return true;
 
