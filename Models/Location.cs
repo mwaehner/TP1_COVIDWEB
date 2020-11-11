@@ -43,8 +43,9 @@ namespace TP1_ARQWEB.Models
 
         public bool Abierto()
         {
-            var horaActual = DateTime.Now.Hour;
-            var minutoActual = DateTime.Now.Minute;
+
+            var horaActual = DateTime.UtcNow.AddHours(-3).Hour;
+            var minutoActual = DateTime.UtcNow.Minute;
 
             if (AbreATodaHora()) return true;
 
