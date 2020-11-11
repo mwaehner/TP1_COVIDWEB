@@ -15,6 +15,7 @@ using System.Security.Claims;
 using TP1_ARQWEB.Helpers;
 using System.Net.Mail;
 using TP1_ARQWEB.Mail;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -90,8 +91,8 @@ namespace TP1_ARQWEB.Controllers
         private bool intersectAtLeast15Minutes(Stay stay1, Stay stay2)
         {
 
-            DateTime TimeOfExit1 = stay1.TimeOfExit ?? DateTime.Now;
-            DateTime TimeOfExit2 = stay2.TimeOfExit ?? DateTime.Now;
+            DateTime TimeOfExit1 = stay1.TimeOfExit ?? Time.Now();
+            DateTime TimeOfExit2 = stay2.TimeOfExit ?? Time.Now();
 
             if (TimeOfExit1 < stay1.TimeOfEntrance.AddMinutes(15) || TimeOfExit2 < stay2.TimeOfEntrance.AddMinutes(15)) return false;
             if (stay1.TimeOfEntrance <= stay2.TimeOfEntrance && stay2.TimeOfEntrance.AddMinutes(15) <= TimeOfExit1) return true;
@@ -119,7 +120,7 @@ namespace TP1_ARQWEB.Controllers
             infectionReport.ApplicationUserId = currentUser.Id;
             infectionReport.DischargedDate = null;
 
-            if (infectionReport.DiagnosisDate > DateTime.Now)
+            if (infectionReport.DiagnosisDate > Time.Now())
             {
                 ModelState.AddModelError("DiagnosisDate", "La fecha de diagnosis no puede ser posterior a la fecha actual.");
                 return View(infectionReport);
@@ -144,7 +145,7 @@ namespace TP1_ARQWEB.Controllers
                         if(stay2.UserId != stay.UserId && stay2.LocationId == stay.LocationId && intersectAtLeast15Minutes(stay, stay2))
                         {
                             var userAtRisk = await _userManager.FindByIdAsync(stay2.UserId);
-                            DateTime newTimeOfCondition = minDate((stay.TimeOfExit ?? DateTime.Now), (stay2.TimeOfExit ?? DateTime.Now));
+                            DateTime newTimeOfCondition = minDate((stay.TimeOfExit ?? Time.Now()), (stay2.TimeOfExit ?? Time.Now()));
                             if (!userAtRisk.Infected && (userAtRisk.TimeOfLastCondition == null || userAtRisk.TimeOfLastCondition < newTimeOfCondition) )
                             {
                                 userAtRisk.InfectionStatus = InfectionStatus.AtRisk;
@@ -195,7 +196,7 @@ namespace TP1_ARQWEB.Controllers
             {
                 InfectionReportId = infectionReport.Id,
                 DiagnosisDate = infectionReport.DiagnosisDate,
-                DischargedDate = DateTime.Now
+                DischargedDate = Time.Now()
             };
 
 
@@ -221,7 +222,7 @@ namespace TP1_ARQWEB.Controllers
             {
                 ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico");
             }
-            if (infectionDischarge.DischargedDate > DateTime.Now)
+            if (infectionDischarge.DischargedDate > Time.Now())
             {
                 ModelState.AddModelError("DischargedDate", "La fecha de dada de alta no puede ser posterior a la fecha actual.");
             }
@@ -270,7 +271,7 @@ namespace TP1_ARQWEB.Controllers
                 return RedirectToAction(nameof(Index));
             negativeTest.ApplicationUserId = currentUser.Id;
 
-            if (negativeTest.TestDate > DateTime.Now)
+            if (negativeTest.TestDate > Time.Now())
             {
                 ModelState.AddModelError("TestDate", "La fecha de realización del test no puede ser posterior a la fecha actual.");
                 return View(negativeTest);
