@@ -144,22 +144,51 @@ ul {
 }
 
 
-ul.lista-gente li {
-    
-    width: 33.3%;
-   
-
+div.autor {
+    position: relative;
+    overflow: hidden;
 }
+
+ul.lista-gente li {
+    padding: 5px;
+    width: 80%;
+}
+
+.myparagr-priv {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+ 
 div.autor img {
     max-width: 100%;
- 
+    filter: gray;
+    -webkit-filter: grayscale(1);
+    -webkit-transition: all .5s ease-in-out;
 }
 
-
+div.autor p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 7px 5px;
+    margin: 0;
+    background-color: rgba(0,0,0,0.55);
+    width: 100%;
+    text-align: left;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.0em;
+    /*color: white;*/
+    color: #fe4918;
+    text-transform: uppercase;
+    -webkit-transition: all .5s ease-in-out;
+}
 
 @media only screen and (min-width: 768px) {
     ul.lista-gente li {
-        width: 33.3%;
+        width: 35%;
         padding: 10px;
         
         display: inline-block;
@@ -169,34 +198,29 @@ div.autor img {
 
     .myparagr-priv {
         font-family: 'Oswald', sans-serif;
-        font-size: 2.4em;
+        font-size: 2.0em;
         text-transform: uppercase;
         text-align: center;
     }
 
-    div.autor {
-        position: relative;
-        overflow: hidden;
-    }
 
-        div.autor img {
-            max-width: 100%;
-            filter: gray;
-            -webkit-filter: grayscale(1);
-            -webkit-transition: all .5s ease-in-out;
-        }
+      
 
         div.autor:hover img {
             -webkit-filter: grayscale(0);
             -webkit-transform: scale(1.8);
         }
 
+        div.autor:hover p{
+            bottom: -80px;
+            opacity: 0;
+        }
 
         div.autor p {
             position: absolute;
             bottom: 0;
             left: 0;
-            padding: 15px 10px;
+            padding: 10px 10px;
             margin: 0;
             background-color: rgba(0,0,0,0.55);
             width: 100%;
@@ -215,6 +239,12 @@ div.autor img {
 @media only screen and (min-width: 1400px) {
     ul.lista-gente li {
         width: 42%;
+    }
+    .myparagr-priv {
+        font-family: 'Oswald', sans-serif;
+        font-size: 2.4em;
+        text-transform: uppercase;
+        text-align: center;
     }
     div.autor p {
         position: absolute;
