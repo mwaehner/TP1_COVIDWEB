@@ -112,6 +112,8 @@ div.login-form-icon {
     font-size: 1.2em;
 }
 
+ 
+
 .navbar-custom {
     background-color: #353535;
 
@@ -130,7 +132,69 @@ div.login-form-icon {
     font-size: 1.2em;
 }
  
+/* privacy section */
+.myparagr-priv {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.4em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+ul {
+   
+    list-style: none;
+    text-align: center;
+}
  
+
+ul.lista-gente li {
+    padding: 10px;
+   
+    width: 42%; 
+    display: inline-block;
+    *display: inline; /*IE7*/
+    *zoom: 1; /*IE7*/
+}
+
+div.autor {
+    position: relative;
+    overflow: hidden;
+}
+
+div.autor img{
+    max-width: 100%;
+    filter: gray;
+    -webkit-filter: grayscale(1);
+    -webkit-transition: all .5s ease-in-out;
+}
+
+div.autor:hover img{
+    -webkit-filter: grayscale(0);
+    -webkit-transform: scale(1.8);
+}
+
+div.autor p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 15px 10px 15px 30px;
+    margin: 0;
+    background-color: rgba(0,0,0,0.55);
+    width: 100%;
+    text-align: left;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3em;
+    
+    color:white;
+    text-transform: uppercase;
+    -webkit-transition: all .5s ease-in-out;
+}
+
+
+
+
+
+
 
 
 
