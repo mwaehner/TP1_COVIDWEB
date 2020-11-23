@@ -1,0 +1,27 @@
+﻿@model TP1_ARQWEB.Models.CheckDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<h1 class="myheader m-2">Encuentre un Código QR</h1>
+
+<div id="div-video-container"  >
+    <video class="dbrScanner-video" playsinline="true" width="500" height="500"></video>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@7.6.0/dist/dbr.js" data-productKeys="t0076xQAAALR6BHIdrDYytGxZdwaZWmFll0HznnC27K08Uqq8xu1j9nRctesGPCIi5Dv4jfG7Hv+Q4jLYWU+SvOY7WmoeQl114eEPZYkqdA=="></script>
+<script>
+    let scanner = null;
+    (async () => {
+        scanner = await Dynamsoft.BarcodeScanner.createInstance();
+        await scanner.setUIElement(document.getElementById('div-video-container'));
+        scanner.onFrameRead = results => { console.log(results); };
+        scanner.onUnduplicatedRead = (txt, result) => { analize_QR_text(txt); };
+        await scanner.show();
+    })();
+</script>
+

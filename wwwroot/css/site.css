@@ -129,8 +129,11 @@ div.login-form-icon {
 .myparagr {
     font-size: 1.2em;
 }
- 
 
 
+.div-video-container {
+    max-width: 100%;
+    height: auto;
+}
 
 

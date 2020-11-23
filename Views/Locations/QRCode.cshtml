@@ -8,7 +8,7 @@
 
 
 @{
-    string linkToEncode = @"https://covidweb2020.azurewebsites.net/Check/Details/" + Model.Id;
+    string linkToEncode = @"CovidWeb" + Model.Id;
 
     QRCodeGenerator qrGenerator = new QRCodeGenerator();
     QRCodeData qrCodeData = qrGenerator.CreateQrCode(linkToEncode, QRCodeGenerator.ECCLevel.Q);

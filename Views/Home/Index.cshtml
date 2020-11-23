@@ -4,19 +4,26 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
 <h1 class="myheader m-2">Bienvenido a CovidWeb!</h1>
 
 <p class="myparagr m-2">En este sitio vas a poder registrar locaciones y contagios.</p>
 
-    <div class="col screen-sm-min">
-        <a id="reports" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Reports" asp-action="Index">Reportes</a>
+<div class="col screen-sm-min">
+    <a id="reports" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Reports" asp-action="Index">Reportes</a>
 
 
-    </div>
-    <div class="col hidden-md-up">
-        <a id="locat" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Locations" asp-action="Index">Locaciones</a>
+</div>
+<div class="col hidden-md-up">
+    <a id="locat" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Locations" asp-action="Index">Locaciones</a>
 
-    </div>
+</div>
+
+<div class="col hidden-md-up">
+    <a id="qr-reader" class="nav-link text-dark alert-info m-2" asp-area="" asp-controller="Check" asp-action="QRCodeReader">Leer Código QR</a>
+
+</div>
 
 @try
 {
@@ -26,17 +33,17 @@
     <div class="text-center">
         @foreach (Notification notification in Model)
         {
-             
-                string notificationString = "";
-                switch (notification.NotificationType)
-                {
-                    case (Notification.Type.AtRisk):
-                        notificationString = "Entraste contacto con alguién contagiado de CoronaVirus alrededor del " + notification.Date.ToString("dd/MM") + " a las " + notification.Date.ToString("HH:mm tt");
-                        break;
-                    default:
-                        break;
-                }
-            
+
+            string notificationString = "";
+            switch (notification.NotificationType)
+            {
+                case (Notification.Type.AtRisk):
+                    notificationString = "Entraste contacto con alguién contagiado de CoronaVirus alrededor del " + notification.Date.ToString("dd/MM") + " a las " + notification.Date.ToString("HH:mm tt");
+                    break;
+                default:
+                    break;
+            }
+
 
             <form asp-action="ClearNotification" asp-route-id="@notification.Id">
                 <span class="btn btn-danger">
@@ -50,6 +57,6 @@
     </div>
 }
 catch (Exception ex)
-                {
+{
 
-                }
+}

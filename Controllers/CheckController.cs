@@ -31,6 +31,13 @@ namespace TP1_ARQWEB.Controllers
 
         // GET: Check/OutBeforeIn/5
         [Authorize]
+        public IActionResult QRCodeReader()
+        {
+            return View();
+        }
+
+        // GET: Check/OutBeforeIn/5
+        [Authorize]
         public async Task<IActionResult> OutBeforeIn(int? idActual, int? idAnterior)
         {
             if (idActual == null || idAnterior == null)
