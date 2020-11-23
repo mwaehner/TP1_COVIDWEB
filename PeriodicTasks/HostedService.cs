@@ -30,6 +30,7 @@ internal class ScopedProcessingService : IScopedProcessingService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
+
             await _statusManager.UpdateUsersStatus();
 
             await Task.Delay(10000, stoppingToken);
@@ -69,7 +70,6 @@ public class ConsumeScopedServiceHostedService : BackgroundService
     public override async Task StopAsync(CancellationToken stoppingToken)
     {
        
-
         await base.StopAsync(stoppingToken);
     }
 }

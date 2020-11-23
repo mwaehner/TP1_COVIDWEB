@@ -156,13 +156,13 @@ namespace TP1_ARQWEB.Controllers
                                     "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus alrededor de la fecha" + newTimeOfCondition.ToString() + ". Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
 
 
-                                Notification newNotification = new Notification
+                                var newNotification = new Notification
                                 {
                                     NotificationType = Notification.Type.AtRisk,
                                     UserId = userAtRisk.Id,
                                     Date = newTimeOfCondition
                                 };
-                                _context.Add(newNotification);
+                                _context.Notification.Add(newNotification);
                                 await _context.SaveChangesAsync();
 
                             }

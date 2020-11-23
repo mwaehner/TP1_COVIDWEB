@@ -2,6 +2,9 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TP1_ARQWEB.Areas.Identity.Data;
+using System.Threading.Tasks;
+using TP1_ARQWEB.Data;
 
 namespace TP1_ARQWEB.Models
 {
