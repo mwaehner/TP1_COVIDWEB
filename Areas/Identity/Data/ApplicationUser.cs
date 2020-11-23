@@ -12,12 +12,7 @@ namespace TP1_ARQWEB.Areas.Identity.Data
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
 
-    public enum InfectionStatus
-    {
-        Healthy = 0,
-        Infected,
-        AtRisk,
-    }
+   
 
     public class ApplicationUser : IdentityUser
     {
