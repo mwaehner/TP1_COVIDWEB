@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TP1_ARQWEB.Services;
+using TP1_ARQWEB.Models;
 
 namespace TP1_ARQWEB.Areas.Identity.Data
 {

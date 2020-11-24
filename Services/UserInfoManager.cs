@@ -29,34 +29,34 @@ namespace TP1_ARQWEB.Services
             _context = context;
         }
 
-        private ApplicationUser user;
-        private UserAppInfo userAppInfo;
 
-        public async Task<UserAppInfo> Initialize(ClaimsPrincipal User)
+        public async Task<UserAppInfo> FindUser(ClaimsPrincipal User)
         {
-            user = await _userManager.GetUserAsync(User);
-            userAppInfo = await _context.UserAppInfo.FindAsync(user.Id);
-            return userAppInfo;
+            var user = await _userManager.GetUserAsync(User);
+            return await _context.UserAppInfo.FindAsync(user.Id);
         }
 
-        public async Task<UserAppInfo> InitializeById(string Id)
+        public async Task<UserAppInfo> FindUserById(string Id)
         {
-            user = await _userManager.FindByIdAsync(Id);
-            userAppInfo = await _context.UserAppInfo.FindAsync(user.Id);
-            return userAppInfo;
+            var user = await _userManager.FindByIdAsync(Id);
+            return await _context.UserAppInfo.FindAsync(user.Id);
         }
 
-        public async Task<InfectionReport> GetOpenInfectionReport()
+        public async Task<InfectionReport> GetOpenInfectionReport(string Id)
         {
             return await _context.InfectionReport
-                    .FirstOrDefaultAsync(m => m.ApplicationUserId == userAppInfo.Id && m.DischargedDate == null);
+                    .FirstOrDefaultAsync(m => m.ApplicationUserId == Id && m.DischargedDate == null);
         }
 
         public async Task Update(UserAppInfo user)
         {
-            userAppInfo = user;
             _context.Update(user);
             await _context.SaveChangesAsync();
+        }
+
+        public DbSet<UserAppInfo> Users()
+        {
+            return _context.UserAppInfo;
         }
 
     }

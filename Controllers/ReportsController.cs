@@ -22,15 +22,13 @@ namespace TP1_ARQWEB.Controllers
     public class ReportsController : Controller
     {
         private readonly DBContext _context;
-        private readonly UserInfoManager _currentUserInfoManager;
+        private readonly UserInfoManager _userInfoManager;
         private readonly IEmailSender _emailSender;
-        UserManager<ApplicationUser> _userManager;
 
         public ReportsController(DBContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
         {
             _context = context;
-            _userManager = userManager;
-            _currentUserInfoManager = new UserInfoManager(userManager, context);
+            _userInfoManager = new UserInfoManager(userManager, context);
             _emailSender = emailSender;
         }
 
@@ -55,9 +53,9 @@ namespace TP1_ARQWEB.Controllers
         // GET: Reports/
         public async Task<IActionResult> Index()
         {
-            UserAppInfo currentUser = await _currentUserInfoManager.Initialize(User);
+            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
 
-            var infectionReport = await _currentUserInfoManager.GetOpenInfectionReport();
+            var infectionReport = await _userInfoManager.GetOpenInfectionReport(currentUser.Id);
 
             var DiagnosisDate = infectionReport?.DiagnosisDate;
 
@@ -76,7 +74,7 @@ namespace TP1_ARQWEB.Controllers
         // GET: Reports/InfectionReport
         public async Task<IActionResult> InfectionReport()
         {
-            UserAppInfo currentUser = await _currentUserInfoManager.Initialize(User);
+            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
 
             if (currentUser.Infected)
                 return RedirectToAction(nameof(Index));
@@ -115,7 +113,7 @@ namespace TP1_ARQWEB.Controllers
         {
 
 
-            UserAppInfo currentUser = await _currentUserInfoManager.Initialize(User);
+            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
             if (currentUser.Infected)
                 return RedirectToAction(nameof(Index));
             infectionReport.ApplicationUserId = currentUser.Id;
@@ -132,7 +130,7 @@ namespace TP1_ARQWEB.Controllers
 
             currentUser.InfectionStatus = InfectionStatus.Infected;
             currentUser.TimeOfLastCondition = infectionReport.DiagnosisDate;
-            await _currentUserInfoManager.Update(currentUser);
+            await _userInfoManager.Update(currentUser);
 
             var stays = await _context.Stay.ToListAsync();
             List<Stay> recentUserLocations = new List<Stay>();
@@ -145,14 +143,13 @@ namespace TP1_ARQWEB.Controllers
                     {
                         if(stay2.UserId != stay.UserId && stay2.LocationId == stay.LocationId && intersectAtLeast15Minutes(stay, stay2))
                         {
-                            var UserAtRiskManager = new UserInfoManager(_userManager, _context);
-                            var userAtRisk = await UserAtRiskManager.InitializeById(stay2.UserId);
+                            var userAtRisk = await _userInfoManager.FindUserById(stay2.UserId);
                             DateTime newTimeOfCondition = minDate((stay.TimeOfExit ?? Time.Now()), (stay2.TimeOfExit ?? Time.Now()));
                             if (!userAtRisk.Infected && (userAtRisk.TimeOfLastCondition == null || userAtRisk.TimeOfLastCondition < newTimeOfCondition) )
                             {
                                 userAtRisk.InfectionStatus = InfectionStatus.AtRisk;
                                 userAtRisk.TimeOfLastCondition = newTimeOfCondition;
-                                await UserAtRiskManager.Update(userAtRisk);
+                                await _userInfoManager.Update(userAtRisk);
                                 await _emailSender.SendEmailAsync(userAtRisk.Email,
                                     "ADVERTENCIA: Riesgo de Contagio",
                                     "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus alrededor de la fecha" + newTimeOfCondition.ToString() + ". Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
@@ -182,11 +179,11 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Discharge()
         {
-            UserAppInfo currentUser = await _currentUserInfoManager.Initialize(User);
+            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
             if (!currentUser.Infected)
                 return RedirectToAction(nameof(Index));
 
-            var infectionReport = await _currentUserInfoManager.GetOpenInfectionReport();
+            var infectionReport = await _userInfoManager.GetOpenInfectionReport(currentUser.Id);
 
             if (infectionReport == null)
             {
@@ -236,10 +233,10 @@ namespace TP1_ARQWEB.Controllers
             await _context.SaveChangesAsync();
 
 
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userInfoManager.FindUser(User);
             currentUser.InfectionStatus = InfectionStatus.Healthy; // Agregar estado Recovered.
             currentUser.TimeOfLastCondition = null;
-            await _userManager.UpdateAsync(currentUser);
+            await _userInfoManager.Update(currentUser);
 
             return RedirectToAction("Index", "Home");
 
@@ -251,7 +248,7 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> NegativeTest()
         {
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userInfoManager.FindUser(User);
 
             if (!currentUser.AtRisk)
                 return RedirectToAction(nameof(Index));
@@ -267,7 +264,7 @@ namespace TP1_ARQWEB.Controllers
         {
 
 
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userInfoManager.FindUser(User);
             if (!currentUser.AtRisk) 
                 return RedirectToAction(nameof(Index));
             negativeTest.ApplicationUserId = currentUser.Id;
@@ -289,7 +286,7 @@ namespace TP1_ARQWEB.Controllers
 
             currentUser.InfectionStatus = InfectionStatus.Healthy;
             currentUser.TimeOfLastCondition = null;
-            await _userManager.UpdateAsync(currentUser);
+            await _userInfoManager.Update(currentUser);
 
 
             return RedirectToAction(nameof(Index));

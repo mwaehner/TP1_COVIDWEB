@@ -26,7 +26,7 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly MvcLocationContext _context;
+        private readonly DBContext _context;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -118,9 +118,8 @@ namespace TP1_ARQWEB.Areas.Identity.Pages.Account
                     UserAppInfo userInfo = new UserAppInfo
                     {
                         Id = user.Id,
-                        Nombre = user.FirstName,
-                        Apellido = user.LastName,
-                        CurrentLocation = null
+                        Email = user.Email,
+                        InfectionStatus = InfectionStatus.Healthy
                     };
 
                     _context.Add(userInfo);
