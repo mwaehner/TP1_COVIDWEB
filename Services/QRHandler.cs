@@ -10,6 +10,7 @@ using TP1_ARQWEB.Models;
 using QRCoder;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
+using System.Drawing;
 
 namespace TP1_ARQWEB.Services
 {
@@ -32,7 +33,8 @@ namespace TP1_ARQWEB.Services
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(stringToEncode, QRCodeGenerator.ECCLevel.Q);
             Base64QRCode qrCode = new Base64QRCode(qrCodeData);
-            return qrCode.GetGraphic(20);
+            //return qrCode.GetGraphic(20);
+            return qrCode.GetGraphic(20, Color.Black, Color.White, (Bitmap)Bitmap.FromFile("wwwroot/images/CW.png"));
         }
 
         public QRData DecodeQRCode(string data)
