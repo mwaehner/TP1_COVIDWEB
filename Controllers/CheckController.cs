@@ -29,12 +29,7 @@ namespace TP1_ARQWEB.Controllers
             _context = context;
         }
 
-        // GET: Check/OutBeforeIn/5
-        [Authorize]
-        public IActionResult QRCodeReader()
-        {
-            return View();
-        }
+        
 
         // GET: Check/OutBeforeIn/5
         [Authorize]

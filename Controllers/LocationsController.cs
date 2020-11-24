@@ -12,6 +12,8 @@ using TP1_ARQWEB.Models;
 using Microsoft.AspNetCore.Identity;
 using TP1_ARQWEB.Areas.Identity.Data;
 using Microsoft.AspNetCore.Http;
+using QRCoder;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Controllers
 {
@@ -41,8 +43,6 @@ namespace TP1_ARQWEB.Controllers
             {
                 return NotFound();
             }
-
-            
             
             var location = await _context.Location
                 .FirstOrDefaultAsync(m => m.Id == id); 
@@ -70,7 +70,17 @@ namespace TP1_ARQWEB.Controllers
             {
                 return NotFound();
             }
-            return View(location);
+
+            var qrHandler = new QRHandler();
+            var qrCodeImageAsBase64 = qrHandler.EncodeLocationIdToBase64(location.Id);
+
+            var model = new QRCodeViewModel()
+            {
+                QREncodedBase64 = qrCodeImageAsBase64,
+                location = location
+            };
+
+            return View(model);
         }
 
         // GET: Locations/Create
