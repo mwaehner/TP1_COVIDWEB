@@ -47,6 +47,6 @@ y en Browse buscar el paquete QRCoder de Raffael Herrmann e instalarlo. También
 
 10 - Para la api: buscar "webapi" en el buscador de paquetes NuGet e instalar los primeros 4.
 
-11 - Para testear api location ingresar url: 
+11 - Para testear api location ingresar url (en su proyecto local): 
 	
 	https://localhost:<puerto>/api/location/<id locacion requerida>
