@@ -31,12 +31,7 @@ namespace TP1_ARQWEB.Controllers
             _userInfoManager = new UserInfoManager(userManager, context);
         }
 
-        // GET: Check/OutBeforeIn/5
-        [Authorize]
-        public IActionResult QRCodeReader()
-        {
-            return View();
-        }
+        
 
         // GET: Check/OutBeforeIn/5
         [Authorize]

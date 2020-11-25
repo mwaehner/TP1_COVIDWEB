@@ -37,10 +37,16 @@ y seleccionar "consola de administrador de paquetes"
 6 - salir y volver a loguearse con mismo mail y password, el sitio los tiene que tener registrados.
 
 7 - para que se pueda mostrar los códigos QR, se debe ir a Tools/NuGet Package Manager/Manage NuGet Packages for Solution
-y en Browse buscar el paquete QRCoder de Raffael Herrmann e instalarlo.
+y en Browse buscar el paquete QRCoder de Raffael Herrmann e instalarlo. También instalar el paquete Newtonsoft.json.
 
 8 - para acceder a pantalla administrador (credenciales hardcodeadas):
 	usermail: admin@gmail.com
 	password: adminadmin
 
 9 - una vez logueado como admin buscar botón adiministrador al lado de los demás
+
+10 - Para la api: buscar "webapi" en el buscador de paquetes NuGet e instalar los primeros 4.
+
+11 - Para testear api location ingresar url (en su proyecto local): 
+	
+	https://localhost:<puerto>/api/location/<id locacion requerida>
