@@ -6,58 +6,44 @@ using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Models;
 using Microsoft.AspNetCore.Identity;
 using TP1_ARQWEB.Areas.Identity.Data;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.PeriodicTasks
 {
     public class StatusManager 
     {
         private readonly DBContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserInfoManager _userInfoManager;
 
-        public StatusManager(UserManager<ApplicationUser> userManager, DBContext context)
+        public StatusManager(DBContext context)
         {
-            _userManager = userManager;
+            _userInfoManager = new UserInfoManager(null, context);
             _context = context;
         }
 
         
         public async Task UpdateUsersStatus()
         {
-
+            
             /*var location = _context.Location.Find(2);
             location.Capacidad++;
             _context.Update(location);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();*/
+            
+            
 
-
-            foreach (ApplicationUser User in _userManager.Users)
+            /*foreach (UserAppInfo User in _userInfoManager.Users())
             {
-                
                 if (User.InfectionStatus != InfectionStatus.Healthy && User.TimeOfLastCondition?.AddDays(15) < DateTime.Now)
                 {
-                    Notification.Type notificationType = 0;
-                    if (User.InfectionStatus == InfectionStatus.AtRisk)
-                        notificationType = Notification.Type.NoLongerAtRisk;
-                    if (User.InfectionStatus == InfectionStatus.Infected)
-                        notificationType = Notification.Type.NoLongerInfected;
-
                     User.InfectionStatus = InfectionStatus.Healthy;
                     User.TimeOfLastCondition = null;
 
-                    await _userManager.UpdateAsync(User);
-
-                    var newNotification = new Notification
-                    {
-                        UserId = User.Id,
-                        NotificationType = notificationType,
-                        Date = DateTime.Now
-                    };
-                    _context.Add(newNotification);
-                    await _context.SaveChangesAsync();
+                    await _userInfoManager.Update(User);
 
                 }
             }*/
-
+            
         }
 
     }

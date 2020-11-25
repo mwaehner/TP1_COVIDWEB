@@ -30,33 +30,30 @@ namespace TP1_ARQWEB.Services
         }
 
 
-        public async Task<UserAppInfo> FindUser(ClaimsPrincipal User)
+        public async Task<ApplicationUser> FindUser(ClaimsPrincipal User)
         {
-            var user = await _userManager.GetUserAsync(User);
-            return await _context.UserAppInfo.FindAsync(user.Id);
+            return await _userManager.GetUserAsync(User);
         }
 
-        public async Task<UserAppInfo> FindUserById(string Id)
+        public async Task<ApplicationUser> FindUserById(string Id)
         {
-            var user = await _userManager.FindByIdAsync(Id);
-            return await _context.UserAppInfo.FindAsync(user.Id);
+            return await _userManager.FindByIdAsync(Id);
         }
 
-        public async Task<InfectionReport> GetOpenInfectionReport(string Id)
+        public async Task<InfectionReport> GetOpenInfectionReport(ApplicationUser user)
         {
             return await _context.InfectionReport
-                    .FirstOrDefaultAsync(m => m.ApplicationUserId == Id && m.DischargedDate == null);
+                    .FirstOrDefaultAsync(m => m.ApplicationUserId == user.Id && m.DischargedDate == null);
         }
 
-        public async Task Update(UserAppInfo user)
+        public async Task Update(ApplicationUser user)
         {
-            _context.Update(user);
-            await _context.SaveChangesAsync();
+            await _userManager.UpdateAsync(user);
         }
 
-        public DbSet<UserAppInfo> Users()
+        public IQueryable<ApplicationUser> Users()
         {
-            return _context.UserAppInfo;
+            return _userManager.Users;
         }
 
     }

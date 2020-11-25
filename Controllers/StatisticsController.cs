@@ -20,11 +20,11 @@ namespace TP1_ARQWEB.Controllers
     public class StatisticsController : Controller
     {
         private readonly DBContext _context;
-        private readonly UserInfoManager _userManager;
+        private readonly UserInfoManager _userInfoManager;
 
         public StatisticsController(UserManager<ApplicationUser> userManager, DBContext context)
         {
-            _userManager = new UserInfoManager(userManager, context);
+            _userInfoManager = new UserInfoManager(userManager, context);
             _context = context;
         }
 
@@ -35,7 +35,7 @@ namespace TP1_ARQWEB.Controllers
 
             int locationsAmount = _context.Location.Count();
             int checkinsAmount = _context.Stay.Count();
-            int usersAmount = _userManager.Users().Count();
+            int usersAmount = _userInfoManager.Users().Count();
             int infectionReportsAmount = _context.InfectionReport.Count();
             int negativeTestsAmount = _context.NegativeTest.Count();
 
@@ -62,7 +62,7 @@ namespace TP1_ARQWEB.Controllers
             var healthy = 0;
             var infected = 0;
             var atRisk = 0;
-            foreach (UserAppInfo User in _userManager.Users())
+            foreach (ApplicationUser User in _userInfoManager.Users())
             {
                 if (User.Infected) infected++;
                 else if (User.AtRisk) atRisk++;

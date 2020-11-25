@@ -53,9 +53,9 @@ namespace TP1_ARQWEB.Controllers
         // GET: Reports/
         public async Task<IActionResult> Index()
         {
-            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
+            var currentUser = await _userInfoManager.FindUser(User);
 
-            var infectionReport = await _userInfoManager.GetOpenInfectionReport(currentUser.Id);
+            var infectionReport = await _userInfoManager.GetOpenInfectionReport(currentUser);
 
             var DiagnosisDate = infectionReport?.DiagnosisDate;
 
@@ -74,7 +74,7 @@ namespace TP1_ARQWEB.Controllers
         // GET: Reports/InfectionReport
         public async Task<IActionResult> InfectionReport()
         {
-            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
+            var currentUser = await _userInfoManager.FindUser(User);
 
             if (currentUser.Infected)
                 return RedirectToAction(nameof(Index));
@@ -113,7 +113,7 @@ namespace TP1_ARQWEB.Controllers
         {
 
 
-            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
+            var currentUser = await _userInfoManager.FindUser(User);
             if (currentUser.Infected)
                 return RedirectToAction(nameof(Index));
             infectionReport.ApplicationUserId = currentUser.Id;
@@ -179,11 +179,11 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Discharge()
         {
-            UserAppInfo currentUser = await _userInfoManager.FindUser(User);
+            var currentUser = await _userInfoManager.FindUser(User);
             if (!currentUser.Infected)
                 return RedirectToAction(nameof(Index));
 
-            var infectionReport = await _userInfoManager.GetOpenInfectionReport(currentUser.Id);
+            var infectionReport = await _userInfoManager.GetOpenInfectionReport(currentUser);
 
             if (infectionReport == null)
             {
