@@ -22,7 +22,7 @@ internal class ScopedProcessingService : IScopedProcessingService
 
     public ScopedProcessingService(UserManager<ApplicationUser> userManager, DBContext context)
     {
-        _statusManager = new StatusManager(userManager, context);
+        _statusManager = new StatusManager(context);
     }
 
 
@@ -30,9 +30,14 @@ internal class ScopedProcessingService : IScopedProcessingService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _statusManager.UpdateUsersStatus();
+            while (true) {
+                try
+                {
+                    await Task.Delay(10000);
+                    await _statusManager.UpdateUsersStatus();
+                } catch (Exception ex) { }
+            }
 
-            await Task.Delay(10000, stoppingToken);
         }
     }
 }
@@ -69,7 +74,6 @@ public class ConsumeScopedServiceHostedService : BackgroundService
     public override async Task StopAsync(CancellationToken stoppingToken)
     {
        
-
         await base.StopAsync(stoppingToken);
     }
 }

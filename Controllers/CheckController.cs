@@ -22,11 +22,13 @@ namespace TP1_ARQWEB.Controllers
 
         private readonly DBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserInfoManager _userInfoManager;
 
         public CheckController(UserManager<ApplicationUser> userManager, DBContext context)
         {
             _userManager = userManager;
             _context = context;
+            _userInfoManager = new UserInfoManager(userManager, context);
         }
 
         
@@ -68,7 +70,7 @@ namespace TP1_ARQWEB.Controllers
                 return NotFound();
             }
 
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userInfoManager.FindUser(User);
 
             CheckDetailsViewModel model = new CheckDetailsViewModel
             {
@@ -91,13 +93,12 @@ namespace TP1_ARQWEB.Controllers
             // cuyos detalles se mostran luego del Check Out
         {
 
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userInfoManager.FindUser(User);
 
             if (currentUser.CurrentLocationId != null)
             {
                 try
                 {
-
                 
                 var location = await _context.Location.FindAsync(currentUser.CurrentLocationId);
                 location.CantidadPersonasDentro--;
@@ -111,7 +112,7 @@ namespace TP1_ARQWEB.Controllers
 
                 currentUser.CurrentLocationId = null;
                 currentUser.CurrentStayId = null;
-                await _userManager.UpdateAsync(currentUser);
+                await _userInfoManager.Update(currentUser);
 
                 currentStay.TimeOfExit = Time.Now();
                 _context.Update(currentStay);
@@ -134,7 +135,7 @@ namespace TP1_ARQWEB.Controllers
         public async Task<IActionResult> In(int? Id)
         {
           
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userInfoManager.FindUser(User);
             var location = await _context.Location.FindAsync(Id);
 
 
@@ -146,8 +147,6 @@ namespace TP1_ARQWEB.Controllers
 
                     try
                     {
-
-
 
                         location.CantidadPersonasDentro++;
 
@@ -166,7 +165,7 @@ namespace TP1_ARQWEB.Controllers
 
                         currentUser.CurrentLocationId = Id;
                         currentUser.CurrentStayId = newStay.Id;
-                        await _userManager.UpdateAsync(currentUser);
+                        await _userInfoManager.Update(currentUser);
                     } catch (DbUpdateConcurrencyException) { }
 
                     

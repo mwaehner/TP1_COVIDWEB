@@ -1,30 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TP1_ARQWEB.Services;
-using TP1_ARQWEB.Models;
 
-namespace TP1_ARQWEB.Areas.Identity.Data
+namespace TP1_ARQWEB.Models
 {
-    // Add profile data for application users by adding properties to the ApplicationUser class
-
-   
-
-    public class ApplicationUser : IdentityUser
+    public enum InfectionStatus
     {
-        [PersonalData]
-        [Column(TypeName ="nvarchar(100)")]
-        public string FirstName { get; set; }
-
-        [PersonalData]
-        [Column(TypeName = "nvarchar(100)")]
-        public string LastName { get; set; }
-
+        Healthy = 0,
+        Infected,
+        AtRisk,
+    }
+    public class UserAppInfo
+    {
+        public string Id { get; set; }
         public int? CurrentLocationId { get; set; }
         public int? CurrentStayId { get; set; }
 
@@ -35,12 +24,18 @@ namespace TP1_ARQWEB.Areas.Identity.Data
             return TimeOfLastCondition?.AddDays(15) > Time.Now();
         }
 
-        public bool Infected { get {
+        public bool Infected
+        {
+            get
+            {
 
                 return InfectionStatus == InfectionStatus.Infected && FewerThan15DaysSinceCondition();
             }
         }
-        public bool AtRisk { get {
+        public bool AtRisk
+        {
+            get
+            {
                 return InfectionStatus == InfectionStatus.AtRisk && FewerThan15DaysSinceCondition();
             }
         }
@@ -49,5 +44,8 @@ namespace TP1_ARQWEB.Areas.Identity.Data
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}", ApplyFormatInEditMode = true)]
         [Display(Name = "Tiempo salida")]
         public DateTime? TimeOfLastCondition { get; set; }
+
+        public string Email { get; set; }
+
     }
 }
