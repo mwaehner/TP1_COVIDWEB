@@ -22,13 +22,13 @@ namespace TP1_ARQWEB.Controllers
     public class ReportsController : Controller
     {
         private readonly DBContext _context;
-        private readonly UserInfoManager _userInfoManager;
+        private readonly IUserInfoManager _userInfoManager;
         private readonly IEmailSender _emailSender;
 
-        public ReportsController(DBContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public ReportsController(DBContext context, IUserInfoManager userInfoManager, IEmailSender emailSender)
         {
             _context = context;
-            _userInfoManager = new UserInfoManager(userManager, context);
+            _userInfoManager = userInfoManager;
             _emailSender = emailSender;
         }
 
