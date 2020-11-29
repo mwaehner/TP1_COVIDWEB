@@ -69,7 +69,7 @@ namespace TP1_ARQWEB.Services
         public async Task UpdateStatus(ApplicationUser user, InfectionStatus stat, DateTime? timeOfStat)
         {
             user.InfectionStatus = stat;
-            user.TimeOfLastCondition = timeOfStat;
+            if (timeOfStat != null) user.TimeOfLastCondition = timeOfStat;
             await _userManager.UpdateAsync(user);
         }
 

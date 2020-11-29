@@ -22,7 +22,7 @@ namespace TP1_ARQWEB.Services
 
     public interface IInfectionManager
     {
-        public Task UpdateRiskStatusFromStays(IQueryable<SimplifiedStay> stays, DateTime DiagnosisDate, string infectedUserId);
+        public Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, DateTime DiagnosisDate, string infectedUserId);
         public Task NewInfectionReport(ApplicationUser user, InfectionReport report);
         public Task DischargeUser(ApplicationUser user, InfectionDischarge report);
         public Task NewNegativeTest(ApplicationUser user, NegativeTest test);
@@ -103,7 +103,7 @@ namespace TP1_ARQWEB.Services
 
         }
 
-        private bool intersectAtLeast15Minutes(SimplifiedStay stay1, SimplifiedStay stay2)
+        private bool intersectAtLeast15Minutes(Stay stay1, Stay stay2)
         {
 
             DateTime TimeOfExit1 = stay1.TimeOfExit ?? Time.Now();
@@ -115,7 +115,7 @@ namespace TP1_ARQWEB.Services
             return false;
         }
 
-        private static DateTime timeEndOfRisk(SimplifiedStay stay1, SimplifiedStay stay2)
+        private static DateTime timeEndOfRisk(Stay stay1, Stay stay2)
         {
             DateTime TimeOfExit1 = stay1.TimeOfExit ?? Time.Now();
             DateTime TimeOfExit2 = stay2.TimeOfExit ?? Time.Now();
@@ -126,7 +126,7 @@ namespace TP1_ARQWEB.Services
         
 
 
-        public async Task UpdateRiskStatusFromStays(IQueryable<SimplifiedStay> stays, DateTime DiagnosisDate, string infectedUserId = "")
+        public async Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, DateTime DiagnosisDate, string infectedUserId = "")
         {
 
             var concurrentStays = from infectedStay in stays
