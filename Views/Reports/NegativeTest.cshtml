@@ -2,12 +2,14 @@
 
 @{
     ViewData["Title"] = "Informar test negativo";
+    var dateToShow = ViewBag.TimeOfLastCondition.ToString("dd/MM/yyyy");
 }
 
 
 
 
 <h4>Reporte de Test con resultado Negativo</h4>
+<p>Usted fue puesto en riesgo por última vez el @dateToShow.</p>
 <p>Por favor introduzca la fecha en que COMENZÓ su test, no la fecha en que recibió los resultados.</p>
 <hr />
 <div class="row">
@@ -17,7 +19,7 @@
             <div class="form-group">
                 <label asp-for="TestDate" class="control-label"></label>
                 <input asp-for="TestDate" class="form-control" />
-                
+
                 <span asp-validation-for="TestDate" class="text-danger"></span>
             </div>
 

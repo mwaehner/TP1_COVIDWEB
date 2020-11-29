@@ -27,7 +27,7 @@ namespace TP1_ARQWEB.Services
         public Task<InfectionReport> GetOpenInfectionReport(ApplicationUser user);
         public Task Update(ApplicationUser user);
         public IQueryable<ApplicationUser> Users();
-        public Task UpdateStatus(ApplicationUser user, InfectionStatus stat, DateTime timeOfStat);
+        public Task UpdateStatus(ApplicationUser user, InfectionStatus stat, DateTime? timeOfStat);
     }
     public class UserInfoManager : IUserInfoManager
     {
@@ -66,7 +66,7 @@ namespace TP1_ARQWEB.Services
             return _userManager.Users;
         }
 
-        public async Task UpdateStatus(ApplicationUser user, InfectionStatus stat, DateTime timeOfStat)
+        public async Task UpdateStatus(ApplicationUser user, InfectionStatus stat, DateTime? timeOfStat)
         {
             user.InfectionStatus = stat;
             user.TimeOfLastCondition = timeOfStat;

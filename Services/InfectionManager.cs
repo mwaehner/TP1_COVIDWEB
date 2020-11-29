@@ -24,6 +24,8 @@ namespace TP1_ARQWEB.Services
     {
         public Task UpdateRiskStatusFromStays(IQueryable<SimplifiedStay> stays, DateTime DiagnosisDate, string infectedUserId);
         public Task NewInfectionReport(ApplicationUser user, InfectionReport report);
+        public Task DischargeUser(ApplicationUser user, InfectionDischarge report);
+        public Task NewNegativeTest(ApplicationUser user, NegativeTest test);
 
     }
     public class InfectionManager : IInfectionManager
@@ -38,6 +40,44 @@ namespace TP1_ARQWEB.Services
             _notificationManager = notificationManager;
         }
 
+
+        public async Task NewNegativeTest(ApplicationUser user, NegativeTest test)
+        {
+            if (!user.AtRisk)
+                throw new Exception("User not currently at risk");
+
+            test.ApplicationUserId = user.Id;
+
+            if (test.TestDate > Time.Now())
+                throw new Exception("Test can't be more recent than present date");
+            if (test.TestDate < user.TimeOfLastCondition)
+                throw new Exception("Test should be more recent than last time put into risk");
+
+            _context.Add(test);
+            await _context.SaveChangesAsync();
+
+            await _userInfoManager.UpdateStatus(user,InfectionStatus.Healthy,null);
+        }
+
+        public async Task DischargeUser(ApplicationUser user, InfectionDischarge report)
+        {
+            var infectionReport = await _context.InfectionReport.FindAsync(report.InfectionReportId);
+
+            if (infectionReport == null)
+                throw new Exception("Previous infection report not found");
+
+            if (infectionReport.DiagnosisDate >= report.DischargedDate)
+                throw new Exception("Discharge date should be subsequent to the Diagnosis date");
+            if (report.DischargedDate > Time.Now())
+                throw new Exception("Discharge date can't be more recent than present date");
+
+            infectionReport.DischargedDate = report.DischargedDate;
+
+            _context.Update(infectionReport);
+            await _context.SaveChangesAsync();
+
+            await _userInfoManager.UpdateStatus(user,InfectionStatus.Healthy,null);
+        }
         public async Task NewInfectionReport (ApplicationUser user, InfectionReport report)
         {
             if (user.Infected)

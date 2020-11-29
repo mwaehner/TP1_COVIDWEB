@@ -84,30 +84,8 @@ namespace TP1_ARQWEB.Controllers
             return View();
         }
 
+
         // POST: Reports/InfectionReport
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-
-
-        private bool intersectAtLeast15Minutes(Stay stay1, Stay stay2)
-        {
-
-            DateTime TimeOfExit1 = stay1.TimeOfExit ?? Time.Now();
-            DateTime TimeOfExit2 = stay2.TimeOfExit ?? Time.Now();
-
-            if (TimeOfExit1 < stay1.TimeOfEntrance.AddMinutes(15) || TimeOfExit2 < stay2.TimeOfEntrance.AddMinutes(15)) return false;
-            if (stay1.TimeOfEntrance <= stay2.TimeOfEntrance && stay2.TimeOfEntrance.AddMinutes(15) <= TimeOfExit1) return true;
-            if (stay2.TimeOfEntrance <= stay1.TimeOfEntrance && stay1.TimeOfEntrance.AddMinutes(15) <= TimeOfExit2) return true;
-            return false;
-        }
-
-        private DateTime minDate(DateTime date1, DateTime date2)
-        {
-            if (date1 < date2) return date1;
-            return date2;
-        }
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -127,65 +105,7 @@ namespace TP1_ARQWEB.Controllers
 
             return RedirectToAction(nameof(Index));
 
-            /*if (currentUser.Infected)
-                return RedirectToAction(nameof(Index));
-            infectionReport.ApplicationUserId = currentUser.Id;
-            infectionReport.DischargedDate = null;
-
-            if (infectionReport.DiagnosisDate > Time.Now())
-            {
-                ModelState.AddModelError("DiagnosisDate", "La fecha de diagnosis no puede ser posterior a la fecha actual.");
-                return View(infectionReport);
-            }
-
-            _context.Add(infectionReport);
-            await _context.SaveChangesAsync();
-
-            currentUser.InfectionStatus = InfectionStatus.Infected;
-            currentUser.TimeOfLastCondition = infectionReport.DiagnosisDate;
-            await _userInfoManager.Update(currentUser);
-
-            var stays = await _context.Stay.ToListAsync();
-            List<Stay> recentUserLocations = new List<Stay>();
-
-            foreach(var stay in stays)
-            {
-                if(stay.UserId == currentUser.Id && stay.TimeOfEntrance.AddDays(14)>=infectionReport.DiagnosisDate)
-                {
-                    foreach (var stay2 in stays)
-                    {
-                        if(stay2.UserId != stay.UserId && stay2.LocationId == stay.LocationId && intersectAtLeast15Minutes(stay, stay2))
-                        {
-                            var userAtRisk = await _userInfoManager.FindUserById(stay2.UserId);
-                            DateTime newTimeOfCondition = minDate((stay.TimeOfExit ?? Time.Now()), (stay2.TimeOfExit ?? Time.Now()));
-                            if (!userAtRisk.Infected && (userAtRisk.TimeOfLastCondition == null || userAtRisk.TimeOfLastCondition < newTimeOfCondition) )
-                            {
-                                userAtRisk.InfectionStatus = InfectionStatus.AtRisk;
-                                userAtRisk.TimeOfLastCondition = newTimeOfCondition;
-                                await _userInfoManager.Update(userAtRisk);
-                                await _emailSender.SendEmailAsync(userAtRisk.Email,
-                                    "ADVERTENCIA: Riesgo de Contagio",
-                                    "Se ha registrado que usted estuvo en contacto con alguien que recientemente contrajo CoronaVirus alrededor de la fecha" + newTimeOfCondition.ToString() + ". Por favor considere realizar un Test de CoronaVirus para asegurar su salud.");
-
-
-                                var newNotification = new Notification
-                                {
-                                    NotificationType = Notification.Type.AtRisk,
-                                    UserId = userAtRisk.Id,
-                                    Date = newTimeOfCondition
-                                };
-                                _context.Notification.Add(newNotification);
-                                await _context.SaveChangesAsync();
-
-                            }
-                        }
-                    }
-                }
-            }
-
             
-
-            return RedirectToAction(nameof(Index));*/
         }
 
         // GET: Reports/Discharge
@@ -220,36 +140,20 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Discharge(InfectionDischarge infectionDischarge)
         {
-
-
-            var infectionReport = await _context.InfectionReport.FindAsync(infectionDischarge.InfectionReportId);
-
-            if (infectionReport == null)
-            {
-                return NotFound();
-            }
-
-            if (infectionReport.DiagnosisDate >= infectionDischarge.DischargedDate)
-            {
-                ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico");
-            }
-            if (infectionDischarge.DischargedDate > Time.Now())
-            {
-                ModelState.AddModelError("DischargedDate", "La fecha de dada de alta no puede ser posterior a la fecha actual.");
-            }
-            if (!ModelState.IsValid) return View(infectionDischarge);
-
-            infectionReport.DischargedDate = infectionDischarge.DischargedDate;
-
-            _context.Update(infectionReport);
-
-            await _context.SaveChangesAsync();
-
-
             var currentUser = await _userInfoManager.FindUser(User);
-            currentUser.InfectionStatus = InfectionStatus.Healthy; // Agregar estado Recovered.
-            currentUser.TimeOfLastCondition = null;
-            await _userInfoManager.Update(currentUser);
+
+            try { await _infectionManager.DischargeUser(currentUser, infectionDischarge); }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Discharge date should be subsequent to the Diagnosis date")
+                    ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico");
+                else if (ex.Message == "Discharge date can't be more recent than present date")
+                    ModelState.AddModelError("DischargedDate", "La fecha de dada de alta no puede ser posterior a la fecha actual.");
+                else return RedirectToAction("Index", "Home");
+
+                return View(infectionDischarge);
+
+            }
 
             return RedirectToAction("Index", "Home");
 
@@ -266,6 +170,8 @@ namespace TP1_ARQWEB.Controllers
             if (!currentUser.AtRisk)
                 return RedirectToAction(nameof(Index));
 
+            ViewBag.TimeOfLastCondition = currentUser.TimeOfLastCondition;
+
             return View();
         }
 
@@ -278,29 +184,19 @@ namespace TP1_ARQWEB.Controllers
 
 
             var currentUser = await _userInfoManager.FindUser(User);
-            if (!currentUser.AtRisk) 
-                return RedirectToAction(nameof(Index));
-            negativeTest.ApplicationUserId = currentUser.Id;
 
-            if (negativeTest.TestDate > Time.Now())
+            try { await _infectionManager.NewNegativeTest(currentUser, negativeTest); }
+            catch (Exception ex)
             {
-                ModelState.AddModelError("TestDate", "La fecha de realización del test no puede ser posterior a la fecha actual.");
+                if (ex.Message == "Test can't be more recent than present date")
+                    ModelState.AddModelError("TestDate", "La fecha de realización del test no puede ser posterior a la fecha actual.");
+                else if (ex.Message == "Test should be more recent than last time put into risk")
+                    ModelState.AddModelError("TestDate", "La fecha de realización del test debe ser posterior a la última vez que fue puesto en riesgo.");
+                else return RedirectToAction(nameof(Index));
+
+                ViewBag.TimeOfLastCondition = currentUser.TimeOfLastCondition;
                 return View(negativeTest);
             }
-            if (negativeTest.TestDate < currentUser.TimeOfLastCondition)
-            {
-                ModelState.AddModelError("TestDate", "La fecha de realización del test debe ser posterior a la última vez que entró en contacto con alguien contagiado.");
-                return View(negativeTest);
-            }
-
-
-            _context.Add(negativeTest);
-            await _context.SaveChangesAsync();
-
-            currentUser.InfectionStatus = InfectionStatus.Healthy;
-            currentUser.TimeOfLastCondition = null;
-            await _userInfoManager.Update(currentUser);
-
 
             return RedirectToAction(nameof(Index));
         }
