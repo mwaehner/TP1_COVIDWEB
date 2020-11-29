@@ -31,8 +31,10 @@ namespace TP1_ARQWEB
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
+
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddTransient<IUserInfoManager, UserInfoManager>();
+            services.AddScoped<ICheckService, CheckService>();
 
 
             services.AddDbContext<DBContext>(options =>
@@ -68,6 +70,9 @@ namespace TP1_ARQWEB
 
             app.UseEndpoints(endpoints =>
             {
+
+                // Desprolijo. Estas obligando a poner toda la api en un unico controller. 
+                // Sería más lógico admitir varios controllers dentro de api.
                 endpoints.MapControllerRoute(
                     name: "api",
                     pattern: "api/action/{id?}");
