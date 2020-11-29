@@ -13,6 +13,7 @@ using TP1_ARQWEB.Data;
 using TP1_ARQWEB.Mail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB
 {
@@ -31,14 +32,15 @@ namespace TP1_ARQWEB
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddTransient<IUserInfoManager, UserInfoManager>();
 
 
             services.AddDbContext<DBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DBContextConnection")));
 
 
-            services.AddHostedService<ConsumeScopedServiceHostedService>();
-            services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+            //services.AddHostedService<ConsumeScopedServiceHostedService>();
+            //services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
 
         }
 

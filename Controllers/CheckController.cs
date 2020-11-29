@@ -21,14 +21,12 @@ namespace TP1_ARQWEB.Controllers
     {
 
         private readonly DBContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly UserInfoManager _userInfoManager;
+        private readonly IUserInfoManager _userInfoManager;
 
-        public CheckController(UserManager<ApplicationUser> userManager, DBContext context)
+        public CheckController(IUserInfoManager userInfoManager, DBContext context)
         {
-            _userManager = userManager;
             _context = context;
-            _userInfoManager = new UserInfoManager(userManager, context);
+            _userInfoManager = userInfoManager;
         }
 
         

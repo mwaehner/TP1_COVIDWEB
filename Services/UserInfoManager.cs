@@ -19,10 +19,19 @@ using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Services
 {
-    public class UserInfoManager
+
+    public interface IUserInfoManager
     {
-        UserManager<ApplicationUser> _userManager;
-        DBContext _context;
+        public Task<ApplicationUser> FindUser(ClaimsPrincipal User);
+        public Task<ApplicationUser> FindUserById(string Id);
+        public Task<InfectionReport> GetOpenInfectionReport(ApplicationUser user);
+        public Task Update(ApplicationUser user);
+        public IQueryable<ApplicationUser> Users();
+    }
+    public class UserInfoManager : IUserInfoManager
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly DBContext _context;
         public UserInfoManager(UserManager<ApplicationUser> userManager, DBContext context)
         {
             _userManager = userManager;
