@@ -33,6 +33,8 @@ namespace TP1_ARQWEB
             services.AddRazorPages();
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddTransient<IUserInfoManager, UserInfoManager>();
+            services.AddTransient<INotificationManager, NotificationManager>();
+            services.AddTransient<IInfectionManager, InfectionManager>();
 
 
             services.AddDbContext<DBContext>(options =>

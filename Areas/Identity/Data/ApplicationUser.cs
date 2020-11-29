@@ -45,6 +45,14 @@ namespace TP1_ARQWEB.Areas.Identity.Data
             }
         }
 
+        public bool Healthy
+        {
+            get
+            {
+                return !Infected && !AtRisk;
+            }
+        }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm:ss}", ApplyFormatInEditMode = true)]
         [Display(Name = "Tiempo salida")]

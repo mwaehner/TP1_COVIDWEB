@@ -24,12 +24,14 @@ namespace TP1_ARQWEB.Controllers
         private readonly DBContext _context;
         private readonly IUserInfoManager _userInfoManager;
         private readonly IEmailSender _emailSender;
+        private readonly IInfectionManager _infectionManager;
 
-        public ReportsController(DBContext context, IUserInfoManager userInfoManager, IEmailSender emailSender)
+        public ReportsController(DBContext context, IUserInfoManager userInfoManager, IEmailSender emailSender, IInfectionManager infectionManager)
         {
             _context = context;
             _userInfoManager = userInfoManager;
             _emailSender = emailSender;
+            _infectionManager = infectionManager;
         }
 
 
@@ -112,9 +114,20 @@ namespace TP1_ARQWEB.Controllers
         public async Task<IActionResult> InfectionReport([Bind("Id,DiagnosisDate")] InfectionReport infectionReport)
         {
 
-
             var currentUser = await _userInfoManager.FindUser(User);
-            if (currentUser.Infected)
+
+            try { await _infectionManager.NewInfectionReport(currentUser, infectionReport); }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Diagnosis date more recent than Discharge date") {
+                    ModelState.AddModelError("DiagnosisDate", "La fecha de diagnosis no puede ser posterior a la fecha actual.");
+                }
+                return View(infectionReport);
+            }
+
+            return RedirectToAction(nameof(Index));
+
+            /*if (currentUser.Infected)
                 return RedirectToAction(nameof(Index));
             infectionReport.ApplicationUserId = currentUser.Id;
             infectionReport.DischargedDate = null;
@@ -172,7 +185,7 @@ namespace TP1_ARQWEB.Controllers
 
             
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));*/
         }
 
         // GET: Reports/Discharge
