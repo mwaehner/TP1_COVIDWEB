@@ -15,12 +15,15 @@ using System.Text.Json.Serialization;
 
 namespace TP1_ARQWEB.Controllers.api
 {
+    // Por qué hereda de ControllerBase en vez de Controller?
     public class ApiController : ControllerBase
     {
         private readonly DBContext _context;
-        public ApiController(DBContext context)
+        private readonly ICheckService _checkService;
+        public ApiController(DBContext context, ICheckService checkService)
         {
             _context = context;
+            _checkService = checkService;
         }
 
         // GET: api/location/{id}
@@ -45,6 +48,50 @@ namespace TP1_ARQWEB.Controllers.api
             var jsonString = JsonSerializer.Serialize(mapLoc);
 
             return Ok(jsonString);
+        }
+
+        public async Task<IActionResult> checkin(int? id)
+        {
+            if (id != null)
+            {
+
+                CheckResult result = await _checkService.Checkin((int)id);
+
+                if (result.successful)
+                {
+                    return RedirectToAction("location", "Api", new { id });
+                }
+
+                return NotFound(JsonSerializer.Serialize(result));
+            }
+
+            CheckResult checkResult = new CheckResult { successful = false, message = "Debe proveer el id de la locacion que desea buscar" };
+
+
+            return NotFound(JsonSerializer.Serialize(checkResult));
+
+        }
+
+        public async Task<IActionResult> checkout(int? id)
+        {
+            if (id != null)
+            {
+
+                CheckResult result = await _checkService.Checkout((int)id);
+
+                if (result.successful)
+                {
+                    return RedirectToAction("location", "Api", new { id });
+                }
+
+                return NotFound(JsonSerializer.Serialize(result));
+            }
+
+            CheckResult checkResult = new CheckResult { successful = false, message = "Debe proveer el id de la locacion que desea buscar" };
+
+
+            return NotFound(JsonSerializer.Serialize(checkResult));
+
         }
 
     }
