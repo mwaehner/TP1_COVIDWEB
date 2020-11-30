@@ -21,23 +21,25 @@ namespace TP1_ARQWEB.Controllers.api
         private readonly DBContext _context;
         private readonly ICheckService _checkService;
         private readonly IInfectionManager _infectionManager;
-        public ApiController(DBContext context, ICheckService checkService, IInfectionManager infectionManager)
+        private readonly ILocationService _locationService;
+        public ApiController(DBContext context, ICheckService checkService, IInfectionManager infectionManager, ILocationService locationService)
         {
             _context = context;
             _checkService = checkService;
             _infectionManager = infectionManager;
+            _locationService = locationService;
         }
 
         // GET: api/location/{id}
-        public async Task<IActionResult> location(int id)
+        public async Task<IActionResult> location(int? id)
         {
-            var l = await _context.Location
-                .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (l == null)
-            {
-                return NotFound();
-            }
+            Location l;
+
+            try { l = await _locationService.GetLocationById(id); }
+            catch { return NotFound(); }
+
+            
             var mapLoc = new MapLocation
             {
                 Nombre = l.Nombre,

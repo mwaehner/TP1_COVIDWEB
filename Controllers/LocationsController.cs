@@ -33,6 +33,20 @@ namespace TP1_ARQWEB.Controllers
             _locationService = locationService;
         }
 
+        private ApplicationUser currentUser;
+        private Location location;
+
+        private async Task UpdateUserAndLocation(int? idLocation)
+        {
+            currentUser = await _userInfoManager.FindUser(User);
+            try
+            {
+                location = await _locationService.GetLocationById(idLocation);
+                _locationService.AssertOwnership(location, currentUser);
+            }
+            catch { throw; }
+        }
+
         // GET: Locations
         [Authorize]
         public async Task<IActionResult> Index()
@@ -46,19 +60,9 @@ namespace TP1_ARQWEB.Controllers
         public async Task<IActionResult> Details(int? id)
         {
 
-            var currentUser = await _userInfoManager.FindUser(User);
-            Location location;
-
-            try { 
-                location = await _locationService.GetLocationById((int)id);
-                _locationService.AssertOwnership(location, currentUser);
-            }
+            try { await UpdateUserAndLocation(id); }
             catch { return NotFound(); }
             
-            if (currentUser.Id != location.IdPropietario)
-            {
-                return NotFound();
-            }
 
             return View(location);
         }
@@ -67,12 +71,7 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> QRCode(int? id)
         {
-            var currentUser = await _userInfoManager.FindUser(User);
-            Location location;
-            try {
-                location = await _locationService.GetLocationById((int)id);
-                _locationService.AssertOwnership(location, currentUser);
-            }
+            try { await UpdateUserAndLocation(id); }
             catch { return NotFound(); }
 
             var qrCodeImageAsBase64 = _locationService.GetQrCode(location);
@@ -119,30 +118,10 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
 
-
-            var location = await _context.Location.FindAsync(id);
-            string userIdValue = _userManager.GetUserId(User);
-            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
-            {
-                return NotFound();
-            }
-
-            var model = new EditViewModel
-            {
-                Nombre = location.Nombre,
-                Capacidad = location.Capacidad,
-                Longitud = location.Longitud,
-                Latitud = location.Latitud,
-                AperturaMinuto = location.AperturaMinuto,
-                AperturaHora = location.AperturaHora,
-                CierreMinuto = location.CierreMinuto,
-                CierreHora = location.CierreHora
-            };
+            var model = location; 
             
             return View(model);
         }
@@ -153,77 +132,28 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Capacidad,Latitud,Longitud,AperturaHora,AperturaMinuto,CierreHora,CierreMinuto")] EditViewModel model)
+        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Capacidad,Latitud,Longitud,AperturaHora,AperturaMinuto,CierreHora,CierreMinuto")] Location model)
         {
-            if (model.Latitud <= -90.0 || model.Latitud >= 90.0)
+
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
+
+            try { await _locationService.EditLocation(location, model); }
+            catch (ModelException ex)
             {
-                ModelState.AddModelError("Latitud", "La latitud debe estar entre -90 y -90");
+                ex.UpdateModelState(ModelState);
+                return View(model);
             }
-            if (model.Longitud >= 180.0 || model.Longitud <= -180.0)
-            {
-                ModelState.AddModelError("Longitud", "La longitud debe estar entre -180 y -180");
-            }
-            if (model.AperturaHora > 23 || model.AperturaHora < 0 || model.AperturaMinuto > 59 || model.AperturaMinuto < 0)
-                ModelState.AddModelError("AperturaHora", "Hora de apertura inválida");
-            if (model.CierreHora > 23 || model.CierreHora < 0 || model.CierreMinuto > 59 || model.CierreMinuto < 0)
-                ModelState.AddModelError("CierreHora", "Hora de cierre inválida");
-            if (ModelState.IsValid)
-            {
-                var location = await _context.Location.FindAsync(id);
-                try
-                {
 
-                    string userIdValue = _userManager.GetUserId(User);
-                    if (!String.IsNullOrWhiteSpace(userIdValue))
-                    {
-                        //location.IdPropietario = userIdValue;
-                        
-
-                        location.Nombre = model.Nombre;
-                        location.Latitud = model.Latitud;
-                        location.Longitud = model.Longitud;
-                        location.Capacidad = model.Capacidad;
-                        location.AperturaHora = model.AperturaHora;
-                        location.AperturaMinuto = model.AperturaMinuto;
-                        location.CierreHora = model.CierreHora;
-                        location.CierreMinuto = model.CierreMinuto;
-
-                        _context.Update(location);
-                        await _context.SaveChangesAsync();
-                    }
-
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LocationExists(location.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(model);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Locations/Image/5
         [Authorize]
         public async Task<IActionResult> Image(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var location = await _context.Location.FindAsync(id);
-            string userIdValue = _userManager.GetUserId(User);
-            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
-            {
-                return NotFound();
-            }
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
 
             ImageViewModel model = new ImageViewModel
             {
@@ -233,53 +163,34 @@ namespace TP1_ARQWEB.Controllers
             return View(model);
         }
 
-        private bool ValidImageFormat (string imageName)
-        {
-            return imageName.EndsWith(".png") || imageName.EndsWith(".jpg");
-        }
-
-        private bool ValidImageSize (long imageSize)
-        {
-            return imageSize <= 1000000;
-        }
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Image(int? id, IFormFile file)
         {
-            if (id == null) return NotFound();
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
 
-            if (file != null && file.Length > 0)
+
+
+            try { await _locationService.UpdateImage(location, file); }
+            catch (ModelException ex)
             {
-                var location = await _context.Location.FindAsync(id);
-
+                ex.UpdateModelState(ModelState);
                 ImageViewModel model = new ImageViewModel
                 {
-                    CurrentLocation = location,
-                    ImageName = file.FileName,
-                    ImageSize = file.Length
+                    CurrentLocation = location
                 };
 
-                if (!ValidImageFormat(model.ImageName))
+                if (file != null)
                 {
-                    ModelState.AddModelError("ImageName", "La imágen debe ser de formato PNG o JPG.");
+                    model.ImageName = file.Name;
+                    model.ImageSize = file.Length;
                 }
-                if (!ValidImageSize(model.ImageSize))
-                {
-                    ModelState.AddModelError("ImageName", "La imágen es demasiado grande.");
-                }
-                if (!ModelState.IsValid) return View(model);
 
-
-                location.Image = new byte[file.Length];
-
-                file.OpenReadStream().Read(location.Image, 0, (int)file.Length);
-                _context.Update(location);
-                await _context.SaveChangesAsync();
-
-                
-
+                return View(model);
             }
 
             return RedirectToAction(nameof(Image));
@@ -292,18 +203,9 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
 
-            var location = await _context.Location
-                .FirstOrDefaultAsync(m => m.Id == id);
-            string userIdValue = _userManager.GetUserId(User);
-            if (location == null || String.IsNullOrWhiteSpace(userIdValue) || userIdValue != location.IdPropietario)
-            {
-                return NotFound();
-            }
             return View(location);
             
         }
@@ -314,16 +216,15 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var location = await _context.Location.FindAsync(id);
-            _context.Location.Remove(location);
-            await _context.SaveChangesAsync();
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
+
+            await _locationService.RemoveLocation(location);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LocationExists(int id)
-        {
-            return _context.Location.Any(e => e.Id == id);
-        }
+        
 
         // POST: Locations/DeleteImage/5
         [HttpPost]
@@ -331,10 +232,10 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteImage(int id)
         {
-            var location = await _context.Location.FindAsync(id);
-            location.Image = null;
-            _context.Update(location);
-            await _context.SaveChangesAsync();
+            try { await UpdateUserAndLocation(id); }
+            catch { return NotFound(); }
+
+            await _locationService.RemoveImage(location);
 
             return RedirectToAction(nameof(Image), new {id = id });
         }
