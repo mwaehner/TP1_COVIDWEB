@@ -95,11 +95,9 @@ namespace TP1_ARQWEB.Controllers
             var currentUser = await _userInfoManager.FindUser(User);
 
             try { await _infectionManager.NewInfectionReport(currentUser, infectionReport); }
-            catch (Exception ex)
+            catch (ModelException ex)
             {
-                if (ex.Message == "Diagnosis date more recent than Discharge date") {
-                    ModelState.AddModelError("DiagnosisDate", "La fecha de diagnosis no puede ser posterior a la fecha actual.");
-                }
+                ex.UpdateModelState(ModelState);
                 return View(infectionReport);
             }
 
@@ -143,14 +141,9 @@ namespace TP1_ARQWEB.Controllers
             var currentUser = await _userInfoManager.FindUser(User);
 
             try { await _infectionManager.DischargeUser(currentUser, infectionDischarge); }
-            catch (Exception ex)
+            catch (ModelException ex)
             {
-                if (ex.Message == "Discharge date should be subsequent to the Diagnosis date")
-                    ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico");
-                else if (ex.Message == "Discharge date can't be more recent than present date")
-                    ModelState.AddModelError("DischargedDate", "La fecha de dada de alta no puede ser posterior a la fecha actual.");
-                else return RedirectToAction("Index", "Home");
-
+                ex.UpdateModelState(ModelState);
                 return View(infectionDischarge);
 
             }
@@ -186,14 +179,9 @@ namespace TP1_ARQWEB.Controllers
             var currentUser = await _userInfoManager.FindUser(User);
 
             try { await _infectionManager.NewNegativeTest(currentUser, negativeTest); }
-            catch (Exception ex)
+            catch (ModelException ex)
             {
-                if (ex.Message == "Test can't be more recent than present date")
-                    ModelState.AddModelError("TestDate", "La fecha de realización del test no puede ser posterior a la fecha actual.");
-                else if (ex.Message == "Test should be more recent than last time put into risk")
-                    ModelState.AddModelError("TestDate", "La fecha de realización del test debe ser posterior a la última vez que fue puesto en riesgo.");
-                else return RedirectToAction(nameof(Index));
-
+                ex.UpdateModelState(ModelState);
                 ViewBag.TimeOfLastCondition = currentUser.TimeOfLastCondition;
                 return View(negativeTest);
             }

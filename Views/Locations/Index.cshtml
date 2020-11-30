@@ -31,18 +31,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            @if (claimsIdentity != null)
-            {
-                // the principal identity is a claims identity.
-                // now we need to find the NameIdentifier claim
-                var userIdClaim = claimsIdentity.Claims
-                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-
-                @if (userIdClaim != null)
-                {
-                    var userIdValue = userIdClaim.Value;
-                    @if (userIdValue == item.IdPropietario)
-                    {
+            
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Nombre)
@@ -63,10 +52,10 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
             </td>
         </tr>
-                    }
+                    
 
-                }
-            }
+                
+            
 
         }
     </tbody>

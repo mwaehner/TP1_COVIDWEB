@@ -36,6 +36,7 @@ namespace TP1_ARQWEB
             services.AddTransient<IUserInfoManager, UserInfoManager>();
             services.AddTransient<INotificationManager, NotificationManager>();
             services.AddTransient<IInfectionManager, InfectionManager>();
+            services.AddTransient<ILocationService, LocationService>();
             services.AddScoped<ICheckService, CheckService>();
 
 

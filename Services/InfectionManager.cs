@@ -49,9 +49,13 @@ namespace TP1_ARQWEB.Services
             test.ApplicationUserId = user.Id;
 
             if (test.TestDate > Time.Now())
-                throw new Exception("Test can't be more recent than present date");
+                throw new ModelException("Test can't be more recent than present date",
+                    (ModelState => { ModelState.AddModelError("TestDate", "La fecha de realización del test no puede ser posterior a la fecha actual."); })
+                    );
             if (test.TestDate < user.TimeOfLastCondition)
-                throw new Exception("Test should be more recent than last time put into risk");
+                throw new ModelException("Test should be more recent than last time put into risk",
+                    (ModelState => { ModelState.AddModelError("TestDate", "La fecha de realización del test debe ser posterior a la última vez que fue puesto en riesgo."); })
+                    );
 
             _context.Add(test);
             await _context.SaveChangesAsync();
@@ -64,12 +68,16 @@ namespace TP1_ARQWEB.Services
             var infectionReport = await _context.InfectionReport.FindAsync(report.InfectionReportId);
 
             if (infectionReport == null)
-                throw new Exception("Previous infection report not found");
+                throw new ModelException("Previous infection report not found");
 
             if (infectionReport.DiagnosisDate >= report.DischargedDate)
-                throw new Exception("Discharge date should be subsequent to the Diagnosis date");
+                throw new ModelException("Discharge date should be subsequent to the Diagnosis date",
+                    (ModelState => { ModelState.AddModelError("DischargedDate", "La fecha de alta debe ser posterior a la de diagnostico"); })
+                    );
             if (report.DischargedDate > Time.Now())
-                throw new Exception("Discharge date can't be more recent than present date");
+                throw new ModelException("Discharge date can't be more recent than present date",
+                    (ModelState => { ModelState.AddModelError("DischargedDate", "La fecha de dada de alta no puede ser posterior a la fecha actual."); })
+                    );
 
             infectionReport.DischargedDate = report.DischargedDate;
 
@@ -78,16 +86,20 @@ namespace TP1_ARQWEB.Services
 
             await _userInfoManager.UpdateStatus(user,InfectionStatus.Healthy,null);
         }
+
+
         public async Task NewInfectionReport (ApplicationUser user, InfectionReport report)
         {
             if (user.Infected)
-                throw new Exception("User already infected");
+                throw new ModelException("User already infected");
 
             report.ApplicationUserId = user.Id;
             report.DischargedDate = null;
 
             if (report.DiagnosisDate > Time.Now())
-                throw new Exception("Diagnosis date more recent than Discharge date");
+                throw new ModelException("Diagnosis date more recent than Discharge date",
+                    (ModelState => { ModelState.AddModelError("DiagnosisDate", "La fecha de diagnosis no puede ser posterior a la fecha actual."); })
+                    );
 
             _context.Add(report);
             await _context.SaveChangesAsync();
