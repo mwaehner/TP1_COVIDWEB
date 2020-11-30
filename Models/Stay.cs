@@ -5,6 +5,34 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace TP1_ARQWEB.Models
 {
     
+    public class ExternalStay
+    {
+        public int location_id { get; set; }
+        public int server_id { get; set; }
+
+        public string begin { get; set; }
+        public string end { get; set; }
+
+        public Stay ToLocalStay()
+        {
+            return new Stay()
+            {
+                UserId = "",
+                LocationId = location_id,
+                ServerId = server_id,
+                TimeOfEntrance = Convert.ToDateTime(begin),
+                TimeOfExit = Convert.ToDateTime(end)
+            };
+        }
+
+
+    }
+
+    public class ListOfExStays
+    {
+        public ExternalStay[] stays { get; set; }
+    }
+
     public class Stay 
     {
         public int Id { get; set; }

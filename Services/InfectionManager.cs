@@ -22,7 +22,7 @@ namespace TP1_ARQWEB.Services
 
     public interface IInfectionManager
     {
-        public Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, DateTime DiagnosisDate, string infectedUserId);
+        public Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, string infectedUserId = "");
         public Task NewInfectionReport(ApplicationUser user, InfectionReport report);
         public Task DischargeUser(ApplicationUser user, InfectionDischarge report);
         public Task NewNegativeTest(ApplicationUser user, NegativeTest test);
@@ -95,11 +95,12 @@ namespace TP1_ARQWEB.Services
             await _userInfoManager.UpdateStatus(user, InfectionStatus.Infected, report.DiagnosisDate);
 
             var userStays = (from stay in _context.Stay
-                            where stay.UserId == user.Id
+                            where stay.UserId == user.Id &&
+                            (stay.TimeOfExit == null || stay.TimeOfExit > report.DiagnosisDate.AddDays(-15))
                             select stay);
 
 
-            await UpdateRiskStatusFromStays(userStays, report.DiagnosisDate, user.Id);
+            await UpdateRiskStatusFromStays(userStays, user.Id);
 
         }
 
@@ -126,11 +127,10 @@ namespace TP1_ARQWEB.Services
         
 
 
-        public async Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, DateTime DiagnosisDate, string infectedUserId = "")
+        public async Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, string infectedUserId = "")
         {
 
             var concurrentStays = from infectedStay in stays
-                                  where (infectedStay.TimeOfExit == null || infectedStay.TimeOfExit > DiagnosisDate.AddDays(-15))
                                 join otherStay in _context.Stay 
                                 on new { LI = infectedStay.LocationId, SI = infectedStay.ServerId }
                                 equals new { LI = otherStay.LocationId, SI = otherStay.ServerId }

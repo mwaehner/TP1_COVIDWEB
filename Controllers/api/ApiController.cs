@@ -20,10 +20,12 @@ namespace TP1_ARQWEB.Controllers.api
     {
         private readonly DBContext _context;
         private readonly ICheckService _checkService;
-        public ApiController(DBContext context, ICheckService checkService)
+        private readonly IInfectionManager _infectionManager;
+        public ApiController(DBContext context, ICheckService checkService, IInfectionManager infectionManager)
         {
             _context = context;
             _checkService = checkService;
+            _infectionManager = infectionManager;
         }
 
         // GET: api/location/{id}
@@ -91,6 +93,24 @@ namespace TP1_ARQWEB.Controllers.api
 
 
             return NotFound(JsonSerializer.Serialize(checkResult));
+
+        }
+
+        public async Task<IActionResult> contagion(string inJson)
+        {
+
+            var ExternalStays = JsonSerializer.Deserialize<ListOfExStays>(inJson);
+
+            var Stays = new List<Stay>();
+
+            foreach (var externalStay in ExternalStays.stays)
+            {
+                Stays.Add(externalStay.ToLocalStay());
+            }
+
+            await _infectionManager.UpdateRiskStatusFromStays((IQueryable<Stay>)Stays);
+
+            return Ok();
 
         }
 

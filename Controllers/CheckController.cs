@@ -88,7 +88,7 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Out(int? Id) 
             // el parametro Id no es la Id de la locacion de la que se hará Check Out sino de la locacion
-            // cuyos detalles se mostran luego del Check Out
+            // cuyos detalles se muestran luego del Check Out
         {
 
             var currentUser = await _userInfoManager.FindUser(User);
