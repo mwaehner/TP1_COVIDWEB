@@ -38,11 +38,11 @@ namespace TP1_ARQWEB.Controllers
             {
                 var mapLoc = new MapLocation
                 {
-                    Nombre = l.Nombre,
-                    Lat = l.Latitud,
-                    Lng = l.Longitud,
-                    Cap = l.Capacidad,
-                    Conc = l.CantidadPersonasDentro
+                    name = l.Nombre,
+                    latitude = l.Latitud,
+                    longitude = l.Longitud,
+                    capacity = l.Capacidad,
+                    concurrence = l.CantidadPersonasDentro
                 };
                 mapLocations.Add(mapLoc);
             }

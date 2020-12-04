@@ -8,13 +8,13 @@ namespace TP1_ARQWEB.Models
     public class MapLocation
     {
 
-        public string Nombre { get; set; }
-        public int Cap { get; set; }
+        public string name { get; set; }
+        public int concurrence { get; set; }
+        public int capacity { get; set; }
 
-        public int Conc { get; set; }
 
-        public double Lat { get; set; }
-        public double Lng { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
         
 
     }

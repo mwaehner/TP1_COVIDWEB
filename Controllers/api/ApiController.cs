@@ -45,16 +45,17 @@ namespace TP1_ARQWEB.Controllers.api
 
             var mapLoc = new MapLocation
             {
-                Nombre = l.Nombre,
-                Lat = l.Latitud,
-                Lng = l.Longitud,
-                Cap = l.Capacidad,
-                Conc = l.CantidadPersonasDentro
+                name = l.Nombre,
+                latitude = l.Latitud,
+                longitude = l.Longitud,
+                capacity = l.Capacidad,
+                concurrence = l.CantidadPersonasDentro
 
             };
-            var jsonString = JsonSerializer.Serialize(mapLoc);
+            // var jsonString = JsonSerializer.Serialize(mapLoc);
+            // estaba devolviendo un json de json, por eso lo comente
 
-            return Ok(jsonString);
+            return Ok(mapLoc);
         }
 
         public async Task<IActionResult> checkin(int? id)
