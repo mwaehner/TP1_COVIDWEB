@@ -7,23 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20201102183438_initial-create.cs" />
-    <Compile Remove="Migrations\20201102183438_initial-create.Designer.cs" />
-    <Compile Remove="Migrations\20201103220439_initial-create.cs" />
-    <Compile Remove="Migrations\20201103220439_initial-create.Designer.cs" />
-    <Compile Remove="Migrations\20201104025351_initial-create.cs" />
-    <Compile Remove="Migrations\20201104025351_initial-create.Designer.cs" />
-    <Compile Remove="Migrations\20201104030717_initial-create.cs" />
-    <Compile Remove="Migrations\20201104030717_initial-create.Designer.cs" />
-    <Compile Remove="Migrations\20201104034938_initial-create.cs" />
-    <Compile Remove="Migrations\20201104034938_initial-create.Designer.cs" />
-    <Compile Remove="Migrations\20201104035116_initial-create.cs" />
-    <Compile Remove="Migrations\20201104035116_initial-create.Designer.cs" />
-    <Compile Remove="Migrations\20201104035427_initial-create.cs" />
-    <Compile Remove="Migrations\20201104035427_initial-create.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="img\logo1.svg" />
   </ItemGroup>
 

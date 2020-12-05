@@ -5,42 +5,39 @@
 
 
 <head>
-    <title>Simple Map</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqliaVfL5DXkcXaDSVwcl8RjxpXob708M&callback=initMap&libraries=&v=weekly"
-            defer></script>
-    <script src="https://unpkg.com/@@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
+	<title>Simple Map</title>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqliaVfL5DXkcXaDSVwcl8RjxpXob708M&callback=initMap&libraries=&v=weekly"
+			defer></script>
+	<script src="https://unpkg.com/@@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
 
-    <style type="text/css">
-        /* Always set the map height explicitly to define the size of the div
-            * element that contains the map. */
-        #map {
-            height: 600px;
-            width: 1200px;
-        }
+	<style type="text/css">
+		/* Always set the map height explicitly to define the size of the div
+			* element that contains the map. */
+		#map {
+			height: 600px;
+			width: 1200px;
+		}
 
-        /* Optional: Makes the sample page fill the window.
-             html,
-             body {
-                 height: 100%;
-                 margin: 0;
-                 padding: 0;
-             }
-                 */
-    </style>
-
-
+		/* Optional: Makes the sample page fill the window.
+			 html,
+			 body {
+				 height: 100%;
+				 margin: 0;
+				 padding: 0;
+			 }
+				 */
+	</style>
 
 
 
-    <script>
+
+
+	<script>
 		var locs = @Html.Raw(Json.Serialize(Model));
 		// Initialize and add the map
 		window.onload = function initMap() {
 			var centerPoint = { lat: -34.6, lng: -58.4 };
-			if (locs.length != 0) {
-				centerPoint = { lat: locs[0].lat, lng: locs[0].lng };
-			}
 			const map = new google.maps.Map(document.getElementById("map"), {
 				zoom: 7,
 				center: centerPoint,
@@ -49,35 +46,35 @@
 			markers = [];
 			for (var i = 0; i < locs.length; i++) {
 				// init markers
-                const  marker = new google.maps.Marker({
-					position: new google.maps.LatLng(locs[i].lat, locs[i].lng),
+				const  marker = new google.maps.Marker({
+					position: new google.maps.LatLng(locs[i].latitude, locs[i].longitude),
 					map: map,
 					title: locs[i].name
 				});
 
-                contentString = '<div id="content">' +
-                    '<div id="siteNotice">' +
-                    "</div>" +
-                    '<h2 id="firstHeading" class="firstHeading">' +
-                    locs[i].nombre +
-                    '</h2>' +
-                    '<div id="bodyContent">' +
-                    "<p><b>Capacidad: </b> " +
-                    locs[i].cap +
-                    "<br>Concurrencia: </b> " +
-                    locs[i].conc +
-                    "</p>" +
+				contentString = '<div id="content">' +
+					'<div id="siteNotice">' +
+					"</div>" +
+					'<h2 id="firstHeading" class="firstHeading">' +
+					locs[i].name +
+					'</h2>' +
+					'<div id="bodyContent">' +
+					"<p><b>Capacidad: </b> " +
+					locs[i].capacity +
+					"<br>Concurrencia: </b> " +
+					locs[i].concurrence +
+					"</p>" +
 
-                    "</div>" +
-                    "</div>";
+					"</div>" +
+					"</div>";
 
-                const infowindow = new google.maps.InfoWindow({
-                    content: contentString,
-                });
+				const infowindow = new google.maps.InfoWindow({
+					content: contentString,
+				});
 
-                 marker.addListener("click", () => {
+				 marker.addListener("click", () => {
 					 infowindow.open(map, marker);
-                });
+				});
 				 markers.push(marker);
 
 			}
@@ -91,7 +88,7 @@
 
 		}
 
-    </script>
+	</script>
 
 
 </head>
