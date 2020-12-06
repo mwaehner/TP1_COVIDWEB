@@ -23,12 +23,14 @@ namespace TP1_ARQWEB.Controllers
         private readonly DBContext _context;
         private readonly IUserInfoManager _userInfoManager;
         private readonly ILocationService _locationService;
+        private readonly ICheckService _checkService;
 
-        public CheckController(IUserInfoManager userInfoManager, DBContext context, ILocationService locationService)
+        public CheckController(IUserInfoManager userInfoManager, DBContext context, ILocationService locationService, ICheckService checkService)
         {
             _context = context;
             _userInfoManager = userInfoManager;
             _locationService = locationService;
+            _checkService = checkService;
         }
         
 
@@ -40,13 +42,9 @@ namespace TP1_ARQWEB.Controllers
             {
                 return NotFound();
             }
-
-            var location = await _context.Location
-                .FirstOrDefaultAsync(m => m.Id == idAnterior);
-            if (location == null)
-            {
-                return NotFound();
-            }
+            Location location;
+            try { location = await _locationService.GetLocationById(idAnterior); }
+            catch { return NotFound(); }
 
             ViewData["idActualLocation"] = idActual;
             ViewData["serverIdActualLocation"] = serverIdActual;
@@ -58,10 +56,7 @@ namespace TP1_ARQWEB.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int? id, int? serverId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+
             Location location;
             try { location = await _locationService.GetLocationById(id, serverId); }
             catch { return NotFound(); }
@@ -92,36 +87,12 @@ namespace TP1_ARQWEB.Controllers
         {
 
             var currentUser = await _userInfoManager.FindUser(User);
+            try { await _context.Location.FindAsync(Id); }
+            catch { return NotFound(); }
 
-            if (currentUser.CurrentLocationId != null)
-            {
-                try
-                {
-                
-                var location = await _context.Location.FindAsync(currentUser.CurrentLocationId);
-                location.CantidadPersonasDentro--;
+            await _checkService.Checkout(currentUser.CurrentLocationId, currentUser);
 
-                _context.Update(location);
-
-
-                Stay currentStay = await _context.Stay
-                .FirstOrDefaultAsync(m => m.Id == currentUser.CurrentStayId);
-
-
-                currentUser.CurrentLocationId = null;
-                currentUser.CurrentStayId = null;
-                await _userInfoManager.Update(currentUser);
-
-                currentStay.TimeOfExit = Time.Now();
-                _context.Update(currentStay);
-
-                await _context.SaveChangesAsync();
-
-                }
-                catch (DbUpdateConcurrencyException) { }
-
-            }
-
+            
             return RedirectToAction("Details", new { id = Id, serverId = serverId });
 
         }
@@ -134,49 +105,13 @@ namespace TP1_ARQWEB.Controllers
         {
           
             var currentUser = await _userInfoManager.FindUser(User);
-            Location location;
-            try { location = await _context.Location.FindAsync(Id); }
+            try { await _context.Location.FindAsync(Id); }
             catch { return NotFound(); }
 
+            var Result = await _checkService.Checkin((int)Id,currentUser);
 
-            if (!currentUser.Infected && location.CantidadPersonasDentro < location.Capacidad && location.Abierto())
-            {
-
-                if (currentUser.CurrentLocationId == null)
-                {
-
-                    try
-                    {
-
-                        location.CantidadPersonasDentro++;
-
-                        _context.Update(location);
-                        await _context.SaveChangesAsync();
-
-                        Stay newStay = new Stay
-                        {
-                            UserId = currentUser.Id,
-                            LocationId = (int)Id,
-                            TimeOfEntrance = Time.Now(),
-                            TimeOfExit = null
-                        };
-                        _context.Add(newStay);
-                        await _context.SaveChangesAsync();
-
-                        currentUser.CurrentLocationId = Id;
-                        currentUser.CurrentStayId = newStay.Id;
-                        await _userInfoManager.Update(currentUser);
-                    } catch (DbUpdateConcurrencyException) { }
-
-                    
-      
-
-                }
-                else if (currentUser.CurrentLocationId != Id)
-                {
-                    return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId, serverIdActual = serverId });
-                }
-            }
+            if (!Result.successful && Result.message == "User is already checked in at a location")
+                return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId, serverIdActual = serverId });
 
             return RedirectToAction("Details", new { id = Id , serverId = serverId});
 
