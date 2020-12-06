@@ -45,7 +45,7 @@ namespace TP1_ARQWEB.Controllers
             }
 
 
-            return RedirectToAction("Details","Check", new { id = Int32.Parse(qrData.location_id) });
+            return RedirectToAction("Details","Check", new { id = Int32.Parse(qrData.location_id), serverId = Int32.Parse(qrData.server_id) });
         }
 
         [Authorize]

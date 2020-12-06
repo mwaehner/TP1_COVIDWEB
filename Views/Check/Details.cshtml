@@ -65,7 +65,7 @@
     }
     else
     {
-        <form asp-action="@inOut" asp-route-id="@Model.location.Id" method="post">
+        <form asp-action="@inOut" asp-route-id="@Model.location.Id" asp-route-serverId="@Model.serverId" method="post">
             <div class="form-group">
                 <input type="submit" value="Check @inOut" class="btn btn-primary" />
             </div>

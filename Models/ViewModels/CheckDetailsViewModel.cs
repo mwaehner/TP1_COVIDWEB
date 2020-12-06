@@ -9,6 +9,7 @@ namespace TP1_ARQWEB.Models
         public bool UserAtRisk { get; set; }
         public bool UserInfected { get; set; }
         public bool LocationFull { get; set; }
+        public int serverId { get; set; }
 
     }
 }

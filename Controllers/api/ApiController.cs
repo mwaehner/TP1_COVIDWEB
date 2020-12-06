@@ -34,13 +34,10 @@ namespace TP1_ARQWEB.Controllers.api
         public async Task<IActionResult> location(int? id)
         {
 
-            var l = await _locationService.GetLocationById(id);
+            Location l;
 
-
-            if (l == null)
-            {
-                return NotFound();
-            }
+            try { l = await _locationService.GetLocationById(id); }
+            catch { return NotFound(); }
 
 
             var mapLoc = new MapLocation

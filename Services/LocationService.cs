@@ -20,7 +20,7 @@ namespace TP1_ARQWEB.Services
     public interface ILocationService
     {
         public List<Location> GetLocationsForUser(ApplicationUser user);
-        public Task<Location> GetLocationById(int? id);
+        public Task<Location> GetLocationById(int? id, int? serverId = 2);
         public void AssertOwnership(Location location, ApplicationUser user);
         public string GetQrCode(Location location);
         public Task CreateNewLocation(Location location, ApplicationUser user);
@@ -52,10 +52,12 @@ namespace TP1_ARQWEB.Services
                     where location.IdPropietario == user.Id
                     select location).ToList<Location>();
         }
-        public async Task<Location> GetLocationById(int? id)
+        public async Task<Location> GetLocationById(int? id, int? serverId = 2)
         {
-            if (id == null) throw new Exception("Null id");
-            return await _context.FindAsync<Location>(id);
+            if (id == null || serverId == null) throw new Exception("Null id");
+            var location = await _context.FindAsync<Location>(id);
+            if (location == null) throw new Exception("Location doesn't exist");
+            return location;
         }
         public string GetQrCode(Location location)
         {

@@ -22,18 +22,19 @@ namespace TP1_ARQWEB.Controllers
 
         private readonly DBContext _context;
         private readonly IUserInfoManager _userInfoManager;
+        private readonly ILocationService _locationService;
 
-        public CheckController(IUserInfoManager userInfoManager, DBContext context)
+        public CheckController(IUserInfoManager userInfoManager, DBContext context, ILocationService locationService)
         {
             _context = context;
             _userInfoManager = userInfoManager;
+            _locationService = locationService;
         }
-
         
 
         // GET: Check/OutBeforeIn/5
         [Authorize]
-        public async Task<IActionResult> OutBeforeIn(int? idActual, int? idAnterior)
+        public async Task<IActionResult> OutBeforeIn(int? idActual, int? idAnterior, int? serverIdActual)
         {
             if (idActual == null || idAnterior == null)
             {
@@ -48,25 +49,23 @@ namespace TP1_ARQWEB.Controllers
             }
 
             ViewData["idActualLocation"] = idActual;
+            ViewData["serverIdActualLocation"] = serverIdActual;
 
             return View(location);
         }
 
         // GET: Check/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? serverId)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            Location location;
+            try { location = await _locationService.GetLocationById(id, serverId); }
+            catch { return NotFound(); }
 
-            var location = await _context.Location
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (location == null)
-            {
-                return NotFound();
-            }
 
             var currentUser = await _userInfoManager.FindUser(User);
 
@@ -76,7 +75,8 @@ namespace TP1_ARQWEB.Controllers
                 UserAtRisk = currentUser.AtRisk,
                 UserInfected = currentUser.Infected,
                 LocationFull = location.CantidadPersonasDentro >= location.Capacidad,
-                UserInLocation = currentUser.CurrentLocationId == location.Id
+                UserInLocation = currentUser.CurrentLocationId == location.Id,
+                serverId = (int)serverId
             };
 
             return View(model);
@@ -86,7 +86,7 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Out(int? Id) 
+        public async Task<IActionResult> Out(int? Id, int? serverId) 
             // el parametro Id no es la Id de la locacion de la que se hará Check Out sino de la locacion
             // cuyos detalles se muestran luego del Check Out
         {
@@ -122,7 +122,7 @@ namespace TP1_ARQWEB.Controllers
 
             }
 
-            return RedirectToAction("Details", new { id = Id });
+            return RedirectToAction("Details", new { id = Id, serverId = serverId });
 
         }
 
@@ -130,11 +130,13 @@ namespace TP1_ARQWEB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> In(int? Id)
+        public async Task<IActionResult> In(int? Id, int? serverId)
         {
           
             var currentUser = await _userInfoManager.FindUser(User);
-            var location = await _context.Location.FindAsync(Id);
+            Location location;
+            try { location = await _context.Location.FindAsync(Id); }
+            catch { return NotFound(); }
 
 
             if (!currentUser.Infected && location.CantidadPersonasDentro < location.Capacidad && location.Abierto())
@@ -172,11 +174,11 @@ namespace TP1_ARQWEB.Controllers
                 }
                 else if (currentUser.CurrentLocationId != Id)
                 {
-                    return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId });
+                    return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId, serverIdActual = serverId });
                 }
             }
 
-            return RedirectToAction("Details", new { id = Id });
+            return RedirectToAction("Details", new { id = Id , serverId = serverId});
 
         }
     }
