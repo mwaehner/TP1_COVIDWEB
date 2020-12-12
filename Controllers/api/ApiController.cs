@@ -20,9 +20,9 @@ namespace TP1_ARQWEB.Controllers.api
     {
         private readonly DBContext _context;
         private readonly ICheckService _checkService;
-        private readonly IInfectionManager _infectionManager;
+        private readonly IInfectionService _infectionManager;
         private readonly ILocationService _locationService;
-        public ApiController(DBContext context, ICheckService checkService, IInfectionManager infectionManager, ILocationService locationService)
+        public ApiController(DBContext context, ICheckService checkService, IInfectionService infectionManager, ILocationService locationService)
         {
             _context = context;
             _checkService = checkService;

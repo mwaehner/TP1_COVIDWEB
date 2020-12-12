@@ -35,7 +35,7 @@ namespace TP1_ARQWEB
             services.AddSingleton<IEmailSender, EmailSender>();
             services.AddTransient<IUserInfoManager, UserInfoManager>();
             services.AddTransient<INotificationManager, NotificationManager>();
-            services.AddTransient<IInfectionManager, InfectionManager>();
+            services.AddTransient<IInfectionService, InfectionService>();
             services.AddTransient<ILocationService, LocationService>();
             services.AddTransient<IExternalPlatformService, ExternalPlatformService>();
             services.AddScoped<ICheckService, CheckService>();

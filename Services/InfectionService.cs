@@ -20,7 +20,7 @@ using TP1_ARQWEB.Services;
 namespace TP1_ARQWEB.Services
 {
 
-    public interface IInfectionManager
+    public interface IInfectionService
     {
         public Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, string infectedUserId = "");
         public Task NewInfectionReport(ApplicationUser user, InfectionReport report);
@@ -28,16 +28,18 @@ namespace TP1_ARQWEB.Services
         public Task NewNegativeTest(ApplicationUser user, NegativeTest test);
 
     }
-    public class InfectionManager : IInfectionManager
+    public class InfectionService : IInfectionService
     {
         private readonly IUserInfoManager _userInfoManager;
         private readonly DBContext _context;
         private readonly INotificationManager _notificationManager;
-        public InfectionManager(IUserInfoManager userInfoManager, DBContext context, INotificationManager notificationManager)
+        private readonly IExternalPlatformService _externalPlatformService;
+        public InfectionService(IUserInfoManager userInfoManager, DBContext context, INotificationManager notificationManager, IExternalPlatformService externalPlatformService)
         {
             _userInfoManager = userInfoManager;
             _context = context;
             _notificationManager = notificationManager;
+            _externalPlatformService = externalPlatformService;
         }
 
 
@@ -114,6 +116,14 @@ namespace TP1_ARQWEB.Services
 
             await UpdateRiskStatusFromStays(userStays, user.Id);
 
+
+            await notifyOtherServers(userStays);
+
+        }
+
+        private Task notifyOtherServers(IQueryable<Stay> userStays)
+        {
+            return _externalPlatformService.notifyOtherServers(userStays);
         }
 
         private bool intersectAtLeast15Minutes(Stay stay1, Stay stay2)

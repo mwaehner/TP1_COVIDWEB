@@ -24,9 +24,9 @@ namespace TP1_ARQWEB.Controllers
         private readonly DBContext _context;
         private readonly IUserInfoManager _userInfoManager;
         private readonly IEmailSender _emailSender;
-        private readonly IInfectionManager _infectionManager;
+        private readonly IInfectionService _infectionManager;
 
-        public ReportsController(DBContext context, IUserInfoManager userInfoManager, IEmailSender emailSender, IInfectionManager infectionManager)
+        public ReportsController(DBContext context, IUserInfoManager userInfoManager, IEmailSender emailSender, IInfectionService infectionManager)
         {
             _context = context;
             _userInfoManager = userInfoManager;
