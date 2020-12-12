@@ -5,6 +5,29 @@ using TP1_ARQWEB.Services;
 
 namespace TP1_ARQWEB.Models
 {
+    public class GeneralizedLocation
+    {
+
+        public string name { get; set; }
+        public int concurrence { get; set; }
+        public int capacity { get; set; }
+
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+
+        public Location ToLocation()
+        {
+            return new Location
+            {
+                Nombre = name,
+                CantidadPersonasDentro = concurrence,
+                Capacidad = capacity,
+                Latitud = latitude,
+                Longitud = longitude
+            };
+        }
+
+    }
     public class Location
     {
         public int Id { get; set; }

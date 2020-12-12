@@ -20,12 +20,14 @@ namespace TP1_ARQWEB.Services
         private readonly DBContext _context;
         private readonly ILocationService _locationService;
         private readonly IUserInfoManager _userInfoManager;
+        private readonly IExternalPlatformService _externalPlatformService;
 
-        public CheckService(DBContext context, ILocationService locationService, IUserInfoManager userInfoManager)
+        public CheckService(DBContext context, ILocationService locationService, IUserInfoManager userInfoManager, IExternalPlatformService externalPlatformService)
         {
             _context = context;
             _locationService = locationService;
             _userInfoManager = userInfoManager;
+            _externalPlatformService = externalPlatformService;
         }
 
         private int CreateStay(ApplicationUser user, int locationId)
@@ -75,6 +77,10 @@ namespace TP1_ARQWEB.Services
                     return new CheckResult { successful = false, message = ex.Message };
                 }
 
+                if (location.CantidadPersonasDentro >= location.Capacidad)
+                {
+                    return new CheckResult { successful = false, message = String.Format("El sitio {0} esta lleno ", location.Nombre) };
+                }
 
                 if (user != null)
                 {
@@ -98,10 +104,7 @@ namespace TP1_ARQWEB.Services
                     await _userInfoManager.Update(user);
                 }
 
-                if (location.CantidadPersonasDentro >= location.Capacidad)
-                {
-                    return new CheckResult { successful = false, message = String.Format("El sitio {0} esta lleno ", location.Nombre) };
-                }
+                
 
                 location.CantidadPersonasDentro++;
                 _context.Update(location);

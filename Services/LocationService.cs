@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -33,10 +34,12 @@ namespace TP1_ARQWEB.Services
     public class LocationService : ILocationService
     {
         private readonly DBContext _context;
+        private readonly IExternalPlatformService _externalPlatformService;
 
-        public LocationService(DBContext context)
+        public LocationService(DBContext context, IExternalPlatformService externalPlatformService)
         {
             _context = context;
+            _externalPlatformService = externalPlatformService;
         }
 
         public void AssertOwnership(Location location, ApplicationUser user)
@@ -52,9 +55,15 @@ namespace TP1_ARQWEB.Services
                     where location.IdPropietario == user.Id
                     select location).ToList<Location>();
         }
+
+        
+
         public async Task<Location> GetLocationById(int? id, int? serverId = 2)
         {
+
             if (id == null || serverId == null) throw new Exception("Null id");
+            if (serverId != 2)
+                return await _externalPlatformService.GetLocation((int)id, (int)serverId);
             var location = await _context.FindAsync<Location>(id);
             if (location == null) throw new Exception("Location doesn't exist");
             return location;

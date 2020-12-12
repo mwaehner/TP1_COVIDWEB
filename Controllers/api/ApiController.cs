@@ -35,12 +35,12 @@ namespace TP1_ARQWEB.Controllers.api
         {
 
             Location l;
-
+            
             try { l = await _locationService.GetLocationById(id); }
             catch { return NotFound(); }
 
 
-            var mapLoc = new MapLocation
+            var mapLoc = new GeneralizedLocation
             {
                 name = l.Nombre,
                 latitude = l.Latitud,
@@ -99,6 +99,7 @@ namespace TP1_ARQWEB.Controllers.api
 
         }
 
+        [Microsoft.AspNetCore.Mvc.Route("api/contagion/new")]
         public async Task<IActionResult> contagion(string inJson)
         {
 
