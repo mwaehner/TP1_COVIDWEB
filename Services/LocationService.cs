@@ -62,7 +62,7 @@ namespace TP1_ARQWEB.Services
         {
 
             if (id == null || serverId == null) throw new Exception("Null id");
-            if (serverId != 2)
+            if (_externalPlatformService.IsForeign((int)serverId))
                 return await _externalPlatformService.GetLocation((int)id, (int)serverId);
             var location = await _context.FindAsync<Location>(id);
             if (location == null) throw new Exception("Location doesn't exist");

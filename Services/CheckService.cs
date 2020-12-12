@@ -11,8 +11,8 @@ namespace TP1_ARQWEB.Services
 {
     public interface ICheckService
     {
-        public Task<CheckResult> Checkin(int id, ApplicationUser user = null);
-        public Task<CheckResult> Checkout(int? id, ApplicationUser user = null);
+        public Task<CheckResult> Checkin(int id, ApplicationUser user = null, int serverId = 2);
+        public Task<CheckResult> Checkout(int? id, ApplicationUser user = null, int serverId = 2);
     }
 
     public class CheckService : ICheckService
@@ -65,13 +65,13 @@ namespace TP1_ARQWEB.Services
         }
 
 
-        public async Task<CheckResult> Checkin(int Id, ApplicationUser user = null)
+        public async Task<CheckResult> Checkin(int Id, ApplicationUser user = null, int serverId = 2)
         {
 
             try
             {
                 Location location;
-                try { location = await _locationService.GetLocationById(Id); }
+                try { location = await _locationService.GetLocationById(Id,serverId); }
                 catch (Exception ex)
                 {
                     return new CheckResult { successful = false, message = ex.Message };
@@ -104,12 +104,24 @@ namespace TP1_ARQWEB.Services
                     await _userInfoManager.Update(user);
                 }
 
+                if (_externalPlatformService.IsForeign(serverId))
+                {
+                    try {
+                        return await _externalPlatformService.ExternalCheckIn(Id, serverId);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new CheckResult { successful = false, message = ex.Message };
+                    }
+                } else
+                {
+                    location.CantidadPersonasDentro++;
+                    _context.Update(location);
+
+                    await _context.SaveChangesAsync();
+                }
+
                 
-
-                location.CantidadPersonasDentro++;
-                _context.Update(location);
-
-                await _context.SaveChangesAsync();
 
                 return new CheckResult { successful = true, message = "Checkin realizado con exito" };
 
@@ -119,7 +131,7 @@ namespace TP1_ARQWEB.Services
             return new CheckResult { successful = false, message = "Alguien más quiso entrar antes que vos" };
         }
 
-        public async Task<CheckResult> Checkout(int? id, ApplicationUser user = null)
+        public async Task<CheckResult> Checkout(int? id, ApplicationUser user = null, int serverId = 2)
         {
             if (id == null) return new CheckResult {successful = false,  message = "Null location ID" };
             try
@@ -127,7 +139,7 @@ namespace TP1_ARQWEB.Services
                 Location location;
                 try { 
 
-                    location = await _locationService.GetLocationById(id);
+                    location = await _locationService.GetLocationById(id, serverId);
                     if (user != null)
                     {
                         CloseStay(user, (int)id);
@@ -141,12 +153,18 @@ namespace TP1_ARQWEB.Services
                     return new CheckResult { successful = false, message = ex.Message };
                 }
 
-                if (location.CantidadPersonasDentro > 0) location.CantidadPersonasDentro--;
+                if (_externalPlatformService.IsForeign(serverId))
+                {
+                    return await _externalPlatformService.ExternalCheckOut((int)id, serverId);
+                } else
+                {
+                    if (location.CantidadPersonasDentro > 0) location.CantidadPersonasDentro--;
 
-                _context.Update(location);
+                    _context.Update(location);
 
-                
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
+                }
+
 
             }
             catch (DbUpdateConcurrencyException) {

@@ -15,7 +15,7 @@ namespace TP1_ARQWEB.Models
         public double latitude { get; set; }
         public double longitude { get; set; }
 
-        public Location ToLocation()
+        public Location ToLocation(int id)
         {
             return new Location
             {
@@ -23,7 +23,8 @@ namespace TP1_ARQWEB.Models
                 CantidadPersonasDentro = concurrence,
                 Capacidad = capacity,
                 Latitud = latitude,
-                Longitud = longitude
+                Longitud = longitude,
+                Id = id
             };
         }
 

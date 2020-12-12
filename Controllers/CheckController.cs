@@ -90,7 +90,7 @@ namespace TP1_ARQWEB.Controllers
             try { await _context.Location.FindAsync(Id); }
             catch { return NotFound(); }
 
-            await _checkService.Checkout(currentUser.CurrentLocationId, currentUser);
+            await _checkService.Checkout(currentUser.CurrentLocationId, currentUser, (int)serverId);
 
             
             return RedirectToAction("Details", new { id = Id, serverId = serverId });
@@ -108,7 +108,7 @@ namespace TP1_ARQWEB.Controllers
             try { await _context.Location.FindAsync(Id); }
             catch { return NotFound(); }
 
-            var Result = await _checkService.Checkin((int)Id,currentUser);
+            var Result = await _checkService.Checkin((int)Id,currentUser,(int)serverId);
 
             if (!Result.successful && Result.message == "User is already checked in at a location")
                 return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId, serverIdActual = serverId });

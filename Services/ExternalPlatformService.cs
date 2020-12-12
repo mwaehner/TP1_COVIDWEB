@@ -22,9 +22,17 @@ namespace TP1_ARQWEB.Services
     {
         public string GetApiBaseURI(int serverId);
         public Task<Location> GetLocation(int locationId, int serverId);
+        public bool IsForeign(int server_id);
+        public Task<CheckResult> ExternalCheckIn(int locationId, int serverId);
+        public Task<CheckResult> ExternalCheckOut(int locationId, int serverId);
+
     }
     public class ExternalPlatformService : IExternalPlatformService
     {
+        public bool IsForeign(int server_id)
+        {
+            return server_id != 2;
+        }
         public string GetApiBaseURI(int serverId)
         {
             switch (serverId)
@@ -32,7 +40,7 @@ namespace TP1_ARQWEB.Services
                 case 0:
                     return "http://yoestuveahiyea.herokuapp.com/";
                 case 1:
-                    return "";
+                    return "http://52.91.22.119/api/";
                 case 2:
                     return "https://localhost:5001/api/";
                 default:
@@ -54,9 +62,45 @@ namespace TP1_ARQWEB.Services
             string responseContent = reader.ReadToEnd();
             var adResponse =
                 JsonConvert.DeserializeObject<GeneralizedLocation>(responseContent);
-            return adResponse.ToLocation();
+            return adResponse.ToLocation(locationId);
 
         }
+
+
+        public async Task<CheckResult> ExternalCheckIn(int locationId, int serverId)
+        {
+            var ApiBaseURI = GetApiBaseURI(serverId);
+
+            WebRequest request = WebRequest.Create(ApiBaseURI + "checkin/" + locationId);
+            request.Method = "POST";
+            
+            request.ContentType = "application/json";
+            request.Headers.Add("Accept", "application/json");
+            WebResponse response = await request.GetResponseAsync();
+            var reader = new StreamReader(response.GetResponseStream());
+            string responseContent = reader.ReadToEnd();
+            var adResponse =
+                JsonConvert.DeserializeObject<CheckResult>(responseContent);
+            return adResponse;
+            
+        }
+        public async Task<CheckResult> ExternalCheckOut(int locationId, int serverId)
+        {
+            var ApiBaseURI = GetApiBaseURI(serverId);
+
+            WebRequest request = WebRequest.Create(ApiBaseURI + "checkout/" + locationId);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers.Add("Accept", "application/json");
+
+            WebResponse response = await request.GetResponseAsync();
+            var reader = new StreamReader(response.GetResponseStream());
+            string responseContent = reader.ReadToEnd();
+            var adResponse =
+                JsonConvert.DeserializeObject<CheckResult>(responseContent);
+            return adResponse;
+        }
+
 
     }
 }
