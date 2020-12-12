@@ -67,13 +67,13 @@ namespace TP1_ARQWEB.Controllers.api
                     return RedirectToAction("location", "Api", new { id });
                 }
 
-                return NotFound(JsonSerializer.Serialize(result));
+                return NotFound(result);
             }
 
             CheckResult checkResult = new CheckResult { successful = false, message = "Debe proveer el id de la locacion que desea buscar" };
 
 
-            return NotFound(JsonSerializer.Serialize(checkResult));
+            return NotFound(checkResult);
 
         }
 
@@ -95,7 +95,7 @@ namespace TP1_ARQWEB.Controllers.api
             CheckResult checkResult = new CheckResult { successful = false, message = "Debe proveer el id de la locacion que desea buscar" };
 
 
-            return NotFound(JsonSerializer.Serialize(checkResult));
+            return NotFound(checkResult);
 
         }
 
