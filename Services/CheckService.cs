@@ -86,7 +86,7 @@ namespace TP1_ARQWEB.Services
                 {
                     try
                     {
-                        return await _externalPlatformService.ExternalCheckIn(Id, serverId);
+                        await _externalPlatformService.ExternalCheckIn(Id, serverId);
                     }
                     catch (Exception ex)
                     {
@@ -122,9 +122,6 @@ namespace TP1_ARQWEB.Services
                     user.CurrentStayId = newStayId;
                     await _userInfoManager.Update(user);
                 }
-
-                
-
                 
 
                 return new CheckResult { successful = true, message = "Checkin realizado con exito" };
@@ -145,7 +142,7 @@ namespace TP1_ARQWEB.Services
 
                 if (_externalPlatformService.IsForeign(serverId))
                 {
-                    return await _externalPlatformService.ExternalCheckOut((int)id, serverId);
+                    await _externalPlatformService.ExternalCheckOut((int)id, serverId);
                 }
                 else
                 {

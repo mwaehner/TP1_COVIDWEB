@@ -15,8 +15,8 @@ namespace TP1_ARQWEB.Services
         public string GetApiBaseURI(int serverId);
         public Task<Location> GetLocation(int locationId, int serverId);
         public bool IsForeign(int server_id);
-        public Task<CheckResult> ExternalCheckIn(int locationId, int serverId);
-        public Task<CheckResult> ExternalCheckOut(int locationId, int serverId);
+        public Task ExternalCheckIn(int locationId, int serverId);
+        public Task ExternalCheckOut(int locationId, int serverId);
         Task notifyOtherServers(IQueryable<Stay> userStays);
     }
     public class ExternalPlatformService : IExternalPlatformService
@@ -69,38 +69,31 @@ namespace TP1_ARQWEB.Services
         }
 
 
-        public async Task<CheckResult> ExternalCheckIn(int locationId, int serverId)
+        public async Task ExternalCheckIn(int locationId, int serverId)
         {
             var ApiBaseURI = GetApiBaseURI(serverId);
 
-            WebRequest request = WebRequest.Create(ApiBaseURI + "checkin/" + locationId);
+            WebRequest request = WebRequest.Create(ApiBaseURI + "checkin/" + locationId + "/");
             request.Method = "POST";
 
             request.ContentType = "application/json";
             request.Headers.Add("Accept", "application/json");
-            WebResponse response = await request.GetResponseAsync();
-            var reader = new StreamReader(response.GetResponseStream());
-            string responseContent = reader.ReadToEnd();
-            var adResponse =
-                JsonConvert.DeserializeObject<CheckResult>(responseContent);
-            return adResponse;
+
+            await request.GetResponseAsync();
+            
 
         }
-        public async Task<CheckResult> ExternalCheckOut(int locationId, int serverId)
+        public async Task ExternalCheckOut(int locationId, int serverId)
         {
             var ApiBaseURI = GetApiBaseURI(serverId);
 
-            WebRequest request = WebRequest.Create(ApiBaseURI + "checkout/" + locationId);
+            WebRequest request = WebRequest.Create(ApiBaseURI + "checkout/" + locationId + "/");
             request.Method = "POST";
             request.ContentType = "application/json";
             request.Headers.Add("Accept", "application/json");
 
-            WebResponse response = await request.GetResponseAsync();
-            var reader = new StreamReader(response.GetResponseStream());
-            string responseContent = reader.ReadToEnd();
-            var adResponse =
-                JsonConvert.DeserializeObject<CheckResult>(responseContent);
-            return adResponse;
+            await request.GetResponseAsync();
+            
         }
 
         public async Task notifyOtherServers(IQueryable<Stay> userStays)

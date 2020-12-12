@@ -146,8 +146,6 @@ namespace TP1_ARQWEB.Services
             return TimeOfExit2;
         }
 
-        
-
 
         public async Task UpdateRiskStatusFromStays(IQueryable<Stay> stays, string infectedUserId = "")
         {
