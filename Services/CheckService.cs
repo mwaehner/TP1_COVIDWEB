@@ -82,6 +82,25 @@ namespace TP1_ARQWEB.Services
                     return new CheckResult { successful = false, message = String.Format("El sitio {0} esta lleno ", location.Nombre) };
                 }
 
+                if (_externalPlatformService.IsForeign(serverId))
+                {
+                    try
+                    {
+                        return await _externalPlatformService.ExternalCheckIn(Id, serverId);
+                    }
+                    catch (Exception ex)
+                    {
+                        return new CheckResult { successful = false, message = ex.Message };
+                    }
+                }
+                else
+                {
+                    location.CantidadPersonasDentro++;
+                    _context.Update(location);
+
+                    await _context.SaveChangesAsync();
+                }
+
                 if (user != null)
                 {
                     var Result = new CheckResult { successful = true, message = "" };
@@ -104,22 +123,7 @@ namespace TP1_ARQWEB.Services
                     await _userInfoManager.Update(user);
                 }
 
-                if (_externalPlatformService.IsForeign(serverId))
-                {
-                    try {
-                        return await _externalPlatformService.ExternalCheckIn(Id, serverId);
-                    }
-                    catch (Exception ex)
-                    {
-                        return new CheckResult { successful = false, message = ex.Message };
-                    }
-                } else
-                {
-                    location.CantidadPersonasDentro++;
-                    _context.Update(location);
-
-                    await _context.SaveChangesAsync();
-                }
+                
 
                 
 
@@ -137,26 +141,13 @@ namespace TP1_ARQWEB.Services
             try
             {
                 Location location;
-                try { 
-
-                    location = await _locationService.GetLocationById(id, serverId);
-                    if (user != null)
-                    {
-                        CloseStay(user, (int)id);
-                        user.CurrentLocationId = null;
-                        user.CurrentStayId = null;
-                        await _userInfoManager.Update(user);
-                    }
-
-                } catch(Exception ex)
-                {
-                    return new CheckResult { successful = false, message = ex.Message };
-                }
+                location = await _locationService.GetLocationById(id, serverId);
 
                 if (_externalPlatformService.IsForeign(serverId))
                 {
                     return await _externalPlatformService.ExternalCheckOut((int)id, serverId);
-                } else
+                }
+                else
                 {
                     if (location.CantidadPersonasDentro > 0) location.CantidadPersonasDentro--;
 
@@ -165,12 +156,21 @@ namespace TP1_ARQWEB.Services
                     await _context.SaveChangesAsync();
                 }
 
+                if (user != null)
+                {
+                    CloseStay(user, (int)id);
+                    user.CurrentLocationId = null;
+                    user.CurrentStayId = null;
+                    await _userInfoManager.Update(user);
+                }
+                
+
 
             }
             catch (DbUpdateConcurrencyException) {
                 return new CheckResult { successful = false, message = "Hubo otra operacion en simultaneo, vuelva a intentarlo." };
 
-            } catch (Exception) { new CheckResult { successful = false , message =""}; }
+            } catch (Exception ex) { new CheckResult { successful = false , message =ex.Message}; }
 
             return new CheckResult { successful = true, message = "Checkout realizado con exito" };
 

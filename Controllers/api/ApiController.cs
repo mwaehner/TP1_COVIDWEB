@@ -100,19 +100,17 @@ namespace TP1_ARQWEB.Controllers.api
         }
 
         [Microsoft.AspNetCore.Mvc.Route("api/contagion/new")]
-        public async Task<IActionResult> contagion(string inJson)
+        public async Task<IActionResult> contagion([Microsoft.AspNetCore.Mvc.FromBody]ListOfExStays listStays)
         {
-
-            var ExternalStays = JsonSerializer.Deserialize<ListOfExStays>(inJson);
 
             var Stays = new List<Stay>();
 
-            foreach (var externalStay in ExternalStays.stays)
+            foreach (var externalStay in listStays.stays)
             {
                 Stays.Add(externalStay.ToLocalStay());
             }
-
-            await _infectionManager.UpdateRiskStatusFromStays((IQueryable<Stay>)Stays);
+            
+            await _infectionManager.UpdateRiskStatusFromStays(Stays.AsQueryable());
 
             return Ok();
 
