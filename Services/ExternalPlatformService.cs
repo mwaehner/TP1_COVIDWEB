@@ -13,7 +13,7 @@ namespace TP1_ARQWEB.Services
     public interface IExternalPlatformService
     {
         public string GetApiBaseURI(int serverId);
-        public Task<Location> GetLocation(int locationId, int serverId);
+        public Task<ExternalLocation> GetLocation(int locationId, int serverId);
         public bool IsForeign(int server_id);
         public Task ExternalCheckIn(int locationId, int serverId);
         public Task ExternalCheckOut(int locationId, int serverId);
@@ -55,7 +55,7 @@ namespace TP1_ARQWEB.Services
             return baseUri;
         }
 
-        public async Task<Location> GetLocation(int locationId, int serverId)
+        public async Task<ExternalLocation> GetLocation(int locationId, int serverId)
         {
             var ApiBaseURI = GetApiBaseURI(serverId);
 
@@ -69,7 +69,7 @@ namespace TP1_ARQWEB.Services
             string responseContent = reader.ReadToEnd();
             var adResponse =
                 JsonConvert.DeserializeObject<GeneralizedLocation>(responseContent);
-            return adResponse.ToLocation(locationId);
+            return adResponse.ToExtLocation(locationId);
 
         }
 

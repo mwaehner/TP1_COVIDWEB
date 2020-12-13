@@ -15,9 +15,9 @@ namespace TP1_ARQWEB.Models
         public double latitude { get; set; }
         public double longitude { get; set; }
 
-        public Location ToLocation(int id)
+        public ExternalLocation ToExtLocation(int id)
         {
-            return new Location
+            return new ExternalLocation
             {
                 Nombre = name,
                 CantidadPersonasDentro = concurrence,
@@ -84,8 +84,21 @@ namespace TP1_ARQWEB.Models
 
         }
 
+        public virtual bool TieneHorario()
+        {
+            return true;
+        }
+
         [Timestamp]
         public byte[] RowVersion { get; set; }
 
+    }
+
+    public class ExternalLocation : Location
+    {
+        public override bool TieneHorario()
+        {
+            return false;
+        }
     }
 }

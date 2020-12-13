@@ -76,7 +76,8 @@ namespace TP1_ARQWEB.Controllers
                 UserInfected = currentUser.Infected,
                 LocationFull = location.CantidadPersonasDentro >= location.Capacidad,
                 UserInLocation = (currentStay?.LocationId == location.Id &&  currentStay?.ServerId == serverId),
-                serverId = (int)serverId
+                serverId = (int)serverId,
+                hasSchedule = location.TieneHorario()
             };
 
             return View(model);
