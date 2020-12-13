@@ -20,11 +20,11 @@ namespace TP1_ARQWEB.Controllers
     public class StatisticsController : Controller
     {
         private readonly DBContext _context;
-        private readonly UserInfoManager _userInfoManager;
+        private readonly IUserInfoManager _userInfoManager;
 
-        public StatisticsController(UserManager<ApplicationUser> userManager, DBContext context)
+        public StatisticsController(IUserInfoManager userInfoManager, DBContext context)
         {
-            _userInfoManager = new UserInfoManager(userManager, context);
+            _userInfoManager = userInfoManager;
             _context = context;
         }
 

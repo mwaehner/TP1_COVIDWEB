@@ -21,7 +21,7 @@ namespace TP1_ARQWEB.Services
     public interface ILocationService
     {
         public List<Location> GetLocationsForUser(ApplicationUser user);
-        public Task<Location> GetLocationById(int? id, int? serverId = 2);
+        public Task<Location> GetLocationById(int? id, int? serverId = -1);
         public void AssertOwnership(Location location, ApplicationUser user);
         public string GetQrCode(Location location);
         public Task CreateNewLocation(Location location, ApplicationUser user);
@@ -58,8 +58,9 @@ namespace TP1_ARQWEB.Services
 
         
 
-        public async Task<Location> GetLocationById(int? id, int? serverId = 2)
+        public async Task<Location> GetLocationById(int? id, int? serverId = -1)
         {
+            if (serverId == -1) serverId = _externalPlatformService.LocalId();
 
             if (id == null || serverId == null) throw new Exception("Null id");
             if (_externalPlatformService.IsForeign((int)serverId))

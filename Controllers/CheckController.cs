@@ -36,15 +36,18 @@ namespace TP1_ARQWEB.Controllers
 
         // GET: Check/OutBeforeIn/5
         [Authorize]
-        public async Task<IActionResult> OutBeforeIn(int? idActual, int? idAnterior, int? serverIdActual)
+        public async Task<IActionResult> OutBeforeIn(int? idActual,  int? serverIdActual)
         {
-            if (idActual == null || idAnterior == null)
+            if (idActual == null)
             {
                 return NotFound();
             }
             Location location;
-            try { location = await _locationService.GetLocationById(idAnterior); }
+            var currentUser = await _userInfoManager.FindUser(User);
+            var currentStay = _userInfoManager.GetOpenStay(currentUser);
+            try { location = await _locationService.GetLocationById(currentStay?.LocationId, currentStay?.ServerId); }
             catch { return NotFound(); }
+            
 
             ViewData["idActualLocation"] = idActual;
             ViewData["serverIdActualLocation"] = serverIdActual;
@@ -64,13 +67,15 @@ namespace TP1_ARQWEB.Controllers
 
             var currentUser = await _userInfoManager.FindUser(User);
 
+            var currentStay = _userInfoManager.GetOpenStay(currentUser);
+
             CheckDetailsViewModel model = new CheckDetailsViewModel
             {
                 location = location,
                 UserAtRisk = currentUser.AtRisk,
                 UserInfected = currentUser.Infected,
                 LocationFull = location.CantidadPersonasDentro >= location.Capacidad,
-                UserInLocation = currentUser.CurrentLocationId == location.Id,
+                UserInLocation = (currentStay?.LocationId == location.Id &&  currentStay?.ServerId == serverId),
                 serverId = (int)serverId
             };
 
@@ -87,13 +92,13 @@ namespace TP1_ARQWEB.Controllers
         {
 
             var currentUser = await _userInfoManager.FindUser(User);
-            try { await _context.Location.FindAsync(Id); }
-            catch { return NotFound(); }
+            /*try { await _locationService.GetLocationById(Id,serverId); }
+            catch { return NotFound(); }*/
 
-            await _checkService.Checkout(currentUser.CurrentLocationId, currentUser, (int)serverId);
+            await _checkService.Checkout(currentUser);
 
             
-            return RedirectToAction("Details", new { id = Id, serverId = serverId });
+            return RedirectToAction("Details", new { id = Id, serverId });
 
         }
 
@@ -105,13 +110,13 @@ namespace TP1_ARQWEB.Controllers
         {
           
             var currentUser = await _userInfoManager.FindUser(User);
-            try { await _context.Location.FindAsync(Id); }
-            catch { return NotFound(); }
+            /*try { await _locationService.GetLocationById(Id,serverId); }
+            catch { return NotFound(); }*/
 
             var Result = await _checkService.Checkin((int)Id,currentUser,(int)serverId);
 
             if (!Result.successful && Result.message == "User is already checked in at a location")
-                return RedirectToAction("OutBeforeIn", new { idActual = Id, idAnterior = currentUser.CurrentLocationId, serverIdActual = serverId });
+                return RedirectToAction("OutBeforeIn", new { idActual = Id,  serverIdActual = serverId });
 
             return RedirectToAction("Details", new { id = Id , serverId = serverId});
 

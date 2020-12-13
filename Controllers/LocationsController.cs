@@ -39,12 +39,8 @@ namespace TP1_ARQWEB.Controllers
         private async Task UpdateUserAndLocation(int? idLocation)
         {
             currentUser = await _userInfoManager.FindUser(User);
-            try
-            {
-                location = await _locationService.GetLocationById(idLocation);
-                _locationService.AssertOwnership(location, currentUser);
-            }
-            catch { throw; }
+            location = await _locationService.GetLocationById(idLocation);
+            _locationService.AssertOwnership(location, currentUser);
         }
 
         // GET: Locations

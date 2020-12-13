@@ -18,6 +18,7 @@ namespace TP1_ARQWEB.Services
         public Task ExternalCheckIn(int locationId, int serverId);
         public Task ExternalCheckOut(int locationId, int serverId);
         Task notifyOtherServers(IQueryable<Stay> userStays);
+        public int LocalId();
     }
     public class ExternalPlatformService : IExternalPlatformService
     {
@@ -31,6 +32,10 @@ namespace TP1_ARQWEB.Services
                 {2, "https://localhost:5001/api/" },
                 {3, "https://f47e5f8a9309aff973c00011cc95f016.m.pipedream.net/api/" }
             };
+        }
+        public int LocalId()
+        {
+            return 2;
         }
 
 

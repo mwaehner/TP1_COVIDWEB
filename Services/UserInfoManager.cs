@@ -28,15 +28,19 @@ namespace TP1_ARQWEB.Services
         public Task Update(ApplicationUser user);
         public IQueryable<ApplicationUser> Users();
         public Task UpdateStatus(ApplicationUser user, InfectionStatus stat, DateTime? timeOfStat);
+        public Stay GetOpenStay(ApplicationUser user);
+        public Task<Location> GetCurrentLocation(ApplicationUser user);
     }
     public class UserInfoManager : IUserInfoManager
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly DBContext _context;
-        public UserInfoManager(UserManager<ApplicationUser> userManager, DBContext context)
+        private readonly ILocationService _locationService;
+        public UserInfoManager(UserManager<ApplicationUser> userManager, DBContext context, ILocationService locationService)
         {
             _userManager = userManager;
             _context = context;
+            _locationService = locationService;
         }
 
 
@@ -54,6 +58,19 @@ namespace TP1_ARQWEB.Services
         {
             return await _context.InfectionReport
                     .FirstOrDefaultAsync(m => m.ApplicationUserId == user.Id && m.DischargedDate == null);
+        }
+
+        public Stay GetOpenStay(ApplicationUser user)
+        {
+            return _context.Stay
+                    .Find(user.CurrentStayId);
+        }
+
+        public async Task<Location> GetCurrentLocation(ApplicationUser user)
+        {
+            var currentStay = GetOpenStay(user);
+            try { return await _locationService.GetLocationById(currentStay?.LocationId, currentStay?.ServerId); }
+            catch { return null; }
         }
 
         public async Task Update(ApplicationUser user)
