@@ -119,7 +119,7 @@ div.login-form-icon {
 
 .navbar-custom {
     background-color: #353535;
-    padding: 20px 0;
+    padding: 15px 0;
     position: fixed;
     width: 100%;
     z-index: 2;
@@ -127,7 +127,7 @@ div.login-form-icon {
 }
 /* *****************solo para padding ****************/
 .paddingClase {
-    padding-top: 110px;
+    padding-top: 100px;
 }
  
 /* h1 */
@@ -252,7 +252,20 @@ div.autor p {
         text-transform: uppercase;
         text-align: center;
     }
-    
+
+    .navbar-custom {
+        background-color: #353535;
+        padding: 20px 0;
+        position: fixed;
+        width: 100%;
+        z-index: 2;
+        top: 0;
+    }
+    /* *****************solo para padding ****************/
+    .paddingClase {
+        padding-top: 110px;
+    }
+ 
  
     div.autor p {
         position: absolute;
