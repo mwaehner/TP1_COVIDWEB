@@ -37,7 +37,7 @@ namespace TP1_ARQWEB.Models
         public static DateTime fromUnixTime(int unixTime)
         {
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToUniversalTime();
-            epoch.AddHours(-3);
+            epoch = epoch.AddHours(-3);
             
             
             return epoch.AddSeconds(unixTime);
