@@ -27,7 +27,7 @@ namespace TP1_ARQWEB.Models
             }
 
             DateTime v = (DateTime)dateTime;
-            v.AddHours(3);
+            v = v.AddHours(3);
 
             return (int)v.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
         }
