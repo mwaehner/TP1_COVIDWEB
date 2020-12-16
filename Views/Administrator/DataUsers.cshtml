@@ -9,21 +9,25 @@
 <table class="table">
     <thead>
         <tr>
+            
             <td><strong>Nombre</strong></td>
             <td><strong>Correo</strong></td>
             <td><strong>Lugar</strong></td>
             <td><strong>Latitud</strong></td>
             <td><strong>Longitud</strong></td>
+            
         </tr>
     </thead>
     @foreach (var prop in Model.Propietarios)
     {
 <tr>
+    
     <td>@prop.usuario.FirstName</td>
     <td>@prop.usuario.Email</td>
     <td>@prop.locaciones.Nombre</td>
     <td>@prop.locaciones.Latitud</td>
     <td>@prop.locaciones.Longitud</td>
+     
 
 </tr>
     }

@@ -14,14 +14,13 @@
 </head>
 <body>
     <header>
-        @*<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        *@
+        
        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-custom   border-bottom box-shadow mb-3">
        
 
         <div class="container">
 
-            <a class="navbar-brand " asp-area="" asp-controller="Home" asp-action="Index">@*CovidWeb *@<img src="/images/logowhite.svg"></a>
+            <a class="navbar-brand " asp-area="" asp-controller="Home" asp-action="Index"> <img src="/images/logowhite.svg"></a>
 
 
             <button type="button" class="navbar-toggler navbar-light" style="background-color: white" data-toggle="collapse" data-target="#navbarCollapse">
@@ -35,7 +34,8 @@
         </div>
         </nav>
     </header>
-    <div class="container">
+  
+<div class="container paddingClase">
         <main role="main" class="pb-3">
             
             @RenderBody()
